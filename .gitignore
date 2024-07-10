@@ -1,0 +1,60 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Compiled output
+**/dist
+**/tmp
+**/out-tsc
+**/bazel-out
+
+# Node
+**/node_modules
+**/npm-debug.log
+**/yarn-error.log
+
+# Miscellaneous
+**/.sass-cache/
+**/connect.lock
+**/coverage
+**/libpeerconnection.log
+**/testem.log
+**/typings
+
+# System files
+**/.DS_Store
+**/Thumbs.db
+
+**/HELP.md
+**/.gradle
+**/build/
+!**/gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+**/.idea
+**/*.iws
+**/*.iml
+**/*.ipr
+**/out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### VS Code ###
+**/.vscode/
+
+# React specific
+**/build/
+**/.eslintcache
+**/node_modules/
