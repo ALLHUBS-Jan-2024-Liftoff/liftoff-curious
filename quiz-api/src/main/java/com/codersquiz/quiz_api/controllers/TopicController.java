@@ -1,19 +1,22 @@
 package com.codersquiz.quiz_api.controllers;
 
-import com.codersquiz.quiz_api.models.Starter;
+import com.codersquiz.quiz_api.ResourceNotFoundException;
 import com.codersquiz.quiz_api.models.Topic;
 import com.codersquiz.quiz_api.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 import java.util.Optional;
 
+
 @RestController
 @RequestMapping("/quiz-api/topics")
 public class TopicController {
+
     @Autowired
-//    private TopicService topicService;
     private TopicRepository topicRepository;
 
     @GetMapping("/all")
@@ -23,16 +26,18 @@ public class TopicController {
 
     @GetMapping("/{topicId}")
     public Topic getTopic(@PathVariable("topicId") Long topicId) {
-        return topicRepository.findById(topicId).get();
+        Optional<Topic> optionalTopic = topicRepository.findById(topicId);
+        if (optionalTopic.isPresent()) {
+            return optionalTopic.get();
+        } else {
+            throw new ResourceNotFoundException("Topic not found with id " + topicId);
+        }
     }
 
     @PostMapping
-    public Topic createTopic(@RequestBody String name) {
-        Topic newTopic = new Topic();
-        newTopic.setName(name);
+    public Topic createTopic(@RequestBody Topic newTopic) {
         return topicRepository.save(newTopic);
     }
-
 
     @PutMapping("/{topicId}")
     public Topic updateTopic(@PathVariable Long topicId, @RequestBody Topic topicDetails) {
@@ -48,7 +53,13 @@ public class TopicController {
 
     @DeleteMapping("/{topicId}")
     public String deleteTopic(@PathVariable Long topicId) {
-        topicRepository.deleteById(topicId);
-        return "Topic deleted successfully";
+        Optional<Topic> optionalTopic = topicRepository.findById(topicId);
+        if (optionalTopic.isPresent()) {
+            topicRepository.deleteById(topicId);
+            return "Topic deleted successfully";
+        } else {
+            throw new ResourceNotFoundException("Topic not found with id " + topicId);
+        }
     }
 }
+
