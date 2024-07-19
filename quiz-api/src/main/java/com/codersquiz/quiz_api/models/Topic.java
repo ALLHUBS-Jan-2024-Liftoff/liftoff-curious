@@ -11,6 +11,12 @@ public class Topic {
 
     private String name;
 
+    public Topic() {
+    }
+
+    public Topic(String name) {
+        this.name = name;
+    }
 
     // Getters and setters
     public Long getId() {
