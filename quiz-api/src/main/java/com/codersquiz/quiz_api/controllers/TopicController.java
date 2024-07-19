@@ -6,12 +6,8 @@ import com.codersquiz.quiz_api.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
 import java.util.Optional;
-
-
-
 
 @RestController
 @RequestMapping("/quiz-api/topics")
@@ -40,13 +36,10 @@ public class TopicController {
 
 
     @PostMapping
-    public Topic createTopic(@RequestBody String name) {
-        Topic newTopic = new Topic();
-        newTopic.setName(name);
+    public Topic createTopic(@RequestBody Topic newTopic) {
         return topicRepository.save(newTopic);
     }
-
-
+    
     @PutMapping("/{topicId}")
     public Topic updateTopic(@PathVariable Long topicId, @RequestBody Topic topicDetails) {
         Optional<Topic> optionalTopic = topicRepository.findById(topicId);
