@@ -6,6 +6,7 @@ function TopicManagerComponent() {
     const [newTopicName, setNewTopicName] = useState('');
     const [editTopicId, setEditTopicId] = useState(null);
     const [editTopicName, setEditTopicName] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         fetchTopics();
@@ -57,8 +58,13 @@ function TopicManagerComponent() {
             try {
                 await deleteTopic(topicId);
                 setTopics(topics.filter(topic => topic.id !== topicId));
+                setErrorMessage(''); // Clear any previous error messages
             } catch (error) {
-                console.error('Error deleting topic:', error);
+                if (error.response && error.response.status === 400) {
+                    setErrorMessage('Cannot delete topic. There are questions linked to this topic.');
+                } else {
+                    console.error('Error deleting topic:', error);
+                }
             }
         }
     };
@@ -66,58 +72,62 @@ function TopicManagerComponent() {
     return (
         <div>
             <div className="mb-4">
-            <h5>List of Topics</h5>
-            <div className="table-responsive w-auto mx-auto">
-            <table className="table table-striped w-auto">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Topic Name</th>
-                        <th scope="col">Topic ID</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {topics.map((topic, index) => (
-                        <tr key={topic.id}>
-                            <th scope="row">{index + 1}</th>
-                            <td>{topic.name}</td>
-                            <td>{topic.id}</td>
-                            <td>
-                                <button className="btn btn-warning btn-sm me-2" onClick={() => handleEditTopic(topic.id)}>Edit</button>
-                                <button className="btn btn-danger btn-sm" onClick={() => handleDeleteTopic(topic.id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            </div>
-            {editTopicId && (
-                <div className="mt-2">
-                    <h5>Edit Topic</h5>
-                    <div className="row mb-3">
-                    <div className="col-md-2">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={editTopicName}
-                            onChange={(e) => setEditTopicName(e.target.value)}
-                            placeholder="Topic name"
-                        />
-                    </div>
-                    <div className="col-md-2">
-                        <button className="btn btn-primary" onClick={handleUpdateTopic}>Edit Topic</button>
-                    </div>
-                    <div className="col-auto"></div>
-                    </div>
+                <h5>List of Topics</h5>
+                <div className="table-responsive w-auto mx-auto">
+                    <table className="table table-striped w-auto">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Topic Name</th>
+                                <th scope="col">Topic ID</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {topics.map((topic, index) => (
+                                <tr key={topic.id}>
+                                    <th scope="row">{index + 1}</th>
+                                    <td>{topic.name}</td>
+                                    <td>{topic.id}</td>
+                                    <td>
+                                        <button className="btn btn-warning btn-sm me-2" onClick={() => handleEditTopic(topic.id)}>Edit</button>
+                                        <button className="btn btn-danger btn-sm" onClick={() => handleDeleteTopic(topic.id)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
-            )}
+                {errorMessage && (
+                    <div className="alert alert-danger mt-2">
+                        {errorMessage}
+                    </div>
+                )}
+                {editTopicId && (
+                    <div className="mt-2">
+                        <h5>Edit Topic</h5>
+                        <div className="row mb-3">
+                            <div className="col-md-2">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={editTopicName}
+                                    onChange={(e) => setEditTopicName(e.target.value)}
+                                    placeholder="Topic name"
+                                />
+                            </div>
+                            <div className="col-md-2">
+                                <button className="btn btn-primary" onClick={handleUpdateTopic}>Edit Topic</button>
+                            </div>
+                            <div className="col-auto"></div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="mb-4">
                 <h5>Add A New Topic</h5>
                 <div className="row mb-3">
-                    
                     <div className="col-md-2">
                         <input
                             type="text"
@@ -133,9 +143,8 @@ function TopicManagerComponent() {
                     <div className="col-auto"></div>
                 </div>
             </div>
-            
         </div>
     );
 }
 
-export default TopicManagerComponent
+export default TopicManagerComponent;

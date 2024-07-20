@@ -1,9 +1,13 @@
 package com.codersquiz.quiz_api.controllers;
 
 import com.codersquiz.quiz_api.exceptions.ResourceNotFoundException;
+import com.codersquiz.quiz_api.models.Question;
 import com.codersquiz.quiz_api.models.Topic;
+import com.codersquiz.quiz_api.repositories.QuestionRepository;
 import com.codersquiz.quiz_api.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +20,9 @@ public class TopicController {
 
     @Autowired
     private TopicRepository topicRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
 
     @GetMapping("/all")
@@ -53,14 +60,31 @@ public class TopicController {
     }
 
 
+//    @DeleteMapping("/{topicId}")
+//    public String deleteTopic(@PathVariable Long topicId) {
+//        Optional<Topic> optionalTopic = topicRepository.findById(topicId);
+//        if (optionalTopic.isPresent()) {
+//            topicRepository.deleteById(topicId);
+//            return "Topic deleted successfully";
+//        } else {
+//            throw new ResourceNotFoundException("Topic not found with id " + topicId);
+//        }
+//    }
+
     @DeleteMapping("/{topicId}")
-    public String deleteTopic(@PathVariable Long topicId) {
+    public ResponseEntity<String> deleteTopic(@PathVariable Long topicId) {
         Optional<Topic> optionalTopic = topicRepository.findById(topicId);
         if (optionalTopic.isPresent()) {
+            List<Question> linkedQuestions = questionRepository.findByTopicId(topicId);
+            if (!linkedQuestions.isEmpty()) {
+                return new ResponseEntity<>("Cannot delete topic. There are questions linked to this topic.", HttpStatus.BAD_REQUEST);
+            }
             topicRepository.deleteById(topicId);
-            return "Topic deleted successfully";
+            return new ResponseEntity<>("Topic deleted successfully", HttpStatus.OK);
         } else {
             throw new ResourceNotFoundException("Topic not found with id " + topicId);
         }
     }
+
+
 }
