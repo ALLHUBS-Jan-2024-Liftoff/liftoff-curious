@@ -10,8 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/quiz-api/questions")
@@ -61,17 +63,6 @@ public class QuestionController {
         }
     }
 
-//    @DeleteMapping("/{questionId}")
-//    public String deleteQuestion(@PathVariable Long questionId) {
-//        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
-//        if (optionalQuestion.isPresent()) {
-//            questionRepository.deleteById(questionId);
-//            return "Question deleted successfully";
-//        } else {
-//            throw new ResourceNotFoundException("Question not found with id = " + questionId);
-//        }
-//    }
-
     @DeleteMapping("/{topicId}")
     public ResponseEntity<String> deleteTopic(@PathVariable Long topicId) {
         Optional<Topic> optionalTopic = topicRepository.findById(topicId);
@@ -85,5 +76,16 @@ public class QuestionController {
         } else {
             throw new ResourceNotFoundException("Topic not found with id " + topicId);
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Question>> getQuestionsByTopicAndNumber(@RequestParam Long topic, @RequestParam int numq) {
+        List<Question> questions = questionRepository.findByTopicId(topic);
+        if (questions.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Collections.shuffle(questions);
+        List<Question> selectedQuestions = questions.stream().limit(numq).collect(Collectors.toList());
+        return new ResponseEntity<>(selectedQuestions, HttpStatus.OK);
     }
 }
