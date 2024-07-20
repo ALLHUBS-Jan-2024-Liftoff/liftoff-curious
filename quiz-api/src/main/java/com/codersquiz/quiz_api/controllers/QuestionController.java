@@ -2,6 +2,7 @@ package com.codersquiz.quiz_api.controllers;
 
 import com.codersquiz.quiz_api.exceptions.ResourceNotFoundException;
 import com.codersquiz.quiz_api.models.Question;
+import com.codersquiz.quiz_api.models.Topic;
 import com.codersquiz.quiz_api.repositories.QuestionRepository;
 import com.codersquiz.quiz_api.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/quiz/questions")
+@RequestMapping("/quiz-api/questions")
 public class QuestionController {
 
     @Autowired
@@ -36,8 +37,8 @@ public class QuestionController {
     }
 
     @PostMapping
-    public Question createQuestion(@RequestBody Question question) {
-        return questionRepository.save(question);
+    public Question createQuestion(@RequestBody Question newQuestion) {
+        return questionRepository.save(newQuestion);
     }
 
     @PutMapping("/{questionId}")
@@ -47,6 +48,10 @@ public class QuestionController {
             Question questionToEdit = optionalQuestion.get();
             questionToEdit.setContent(questionDetails.getContent());
             questionToEdit.setAnswer(questionDetails.getAnswer());
+            questionToEdit.setOptionA(questionDetails.getOptionA());
+            questionToEdit.setOptionB(questionDetails.getOptionB());
+            questionToEdit.setOptionC(questionDetails.getOptionC());
+            questionToEdit.setOptionD(questionDetails.getOptionD());
             questionToEdit.setTopic(questionDetails.getTopic());
             return questionRepository.save(questionToEdit);
         } else {

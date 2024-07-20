@@ -39,7 +39,7 @@ public class TopicController {
     public Topic createTopic(@RequestBody Topic newTopic) {
         return topicRepository.save(newTopic);
     }
-    
+
     @PutMapping("/{topicId}")
     public Topic updateTopic(@PathVariable Long topicId, @RequestBody Topic topicDetails) {
         Optional<Topic> optionalTopic = topicRepository.findById(topicId);
