@@ -1,3 +1,8 @@
+body {
+  background-color:antiquewhite;
+  background-image: url('../public/assets/images/03-light-carpet.png');
+}
+
 .App {
   text-align: center;
 }

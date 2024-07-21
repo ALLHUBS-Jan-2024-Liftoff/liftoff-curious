@@ -21,7 +21,7 @@ public class QuizApiApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/api/**")
+				registry.addMapping("/quiz-api/**")
 						.allowedOrigins("http://localhost:3000")
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*")

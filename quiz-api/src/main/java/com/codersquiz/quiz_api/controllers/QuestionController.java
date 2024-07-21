@@ -2,16 +2,21 @@ package com.codersquiz.quiz_api.controllers;
 
 import com.codersquiz.quiz_api.exceptions.ResourceNotFoundException;
 import com.codersquiz.quiz_api.models.Question;
+import com.codersquiz.quiz_api.models.Topic;
 import com.codersquiz.quiz_api.repositories.QuestionRepository;
 import com.codersquiz.quiz_api.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/quiz/questions")
+@RequestMapping("/quiz-api/questions")
 public class QuestionController {
 
     @Autowired
@@ -36,8 +41,8 @@ public class QuestionController {
     }
 
     @PostMapping
-    public Question createQuestion(@RequestBody Question question) {
-        return questionRepository.save(question);
+    public Question createQuestion(@RequestBody Question newQuestion) {
+        return questionRepository.save(newQuestion);
     }
 
     @PutMapping("/{questionId}")
@@ -47,6 +52,10 @@ public class QuestionController {
             Question questionToEdit = optionalQuestion.get();
             questionToEdit.setContent(questionDetails.getContent());
             questionToEdit.setAnswer(questionDetails.getAnswer());
+            questionToEdit.setOptionA(questionDetails.getOptionA());
+            questionToEdit.setOptionB(questionDetails.getOptionB());
+            questionToEdit.setOptionC(questionDetails.getOptionC());
+            questionToEdit.setOptionD(questionDetails.getOptionD());
             questionToEdit.setTopic(questionDetails.getTopic());
             return questionRepository.save(questionToEdit);
         } else {
@@ -54,14 +63,29 @@ public class QuestionController {
         }
     }
 
-    @DeleteMapping("/{questionId}")
-    public String deleteQuestion(@PathVariable Long questionId) {
-        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
-        if (optionalQuestion.isPresent()) {
-            questionRepository.deleteById(questionId);
-            return "Question deleted successfully";
+    @DeleteMapping("/{topicId}")
+    public ResponseEntity<String> deleteTopic(@PathVariable Long topicId) {
+        Optional<Topic> optionalTopic = topicRepository.findById(topicId);
+        if (optionalTopic.isPresent()) {
+            List<Question> linkedQuestions = questionRepository.findByTopicId(topicId);
+            if (!linkedQuestions.isEmpty()) {
+                return new ResponseEntity<>("Cannot delete topic. There are questions linked to this topic.", HttpStatus.BAD_REQUEST);
+            }
+            topicRepository.deleteById(topicId);
+            return new ResponseEntity<>("Topic deleted successfully", HttpStatus.OK);
         } else {
-            throw new ResourceNotFoundException("Question not found with id = " + questionId);
+            throw new ResourceNotFoundException("Topic not found with id " + topicId);
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Question>> getQuestionsByTopicAndNumber(@RequestParam Long topic, @RequestParam int numq) {
+        List<Question> questions = questionRepository.findByTopicId(topic);
+        if (questions.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Collections.shuffle(questions);
+        List<Question> selectedQuestions = questions.stream().limit(numq).collect(Collectors.toList());
+        return new ResponseEntity<>(selectedQuestions, HttpStatus.OK);
     }
 }
