@@ -45,6 +45,17 @@ public class QuestionController {
         return questionRepository.save(newQuestion);
     }
 
+    //NEW BULK ADD
+    @PostMapping("/bulkadd")
+    public List<Question> bulkAddQuestion(@RequestBody List<Question> questions) {
+        // Iterate over each question in the list & save it to the repository
+        for (Question question : questions) {
+            questionRepository.save(question);
+        }
+        // Return the list of saved questions
+        return questions;
+    }
+
     @PutMapping("/{questionId}")
     public Question updateQuestion(@PathVariable Long questionId, @RequestBody Question questionDetails) {
         Optional<Question> optionalQuestion = questionRepository.findById(questionId);

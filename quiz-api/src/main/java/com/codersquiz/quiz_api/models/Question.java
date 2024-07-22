@@ -17,7 +17,7 @@ public class Question {
     private String optionC;
     private String optionD;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER) // ADDED: Ensure the Topic is fetched eagerly
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
