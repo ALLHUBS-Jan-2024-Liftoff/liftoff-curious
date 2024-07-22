@@ -8,14 +8,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/quiz-api/authentication")
+@RequestMapping("/quiz/questions")
 public class AuthenticationController {
 
     @Autowired
@@ -27,30 +30,25 @@ public class AuthenticationController {
         session.setAttribute(userSessionKey, user.getId());
     }
 
-    // Make sure I'm not working with data that doesn't exist
     public User getUserFromSession(HttpSession session) {
-        Integer userId = (Integer) session.getAttribute(userSessionKey);
+        Long userId = (Long) session.getAttribute(userSessionKey); // Use Long instead of Integer
         if (userId == null) {
             return null;
         }
         Optional<User> userOpt = userRepository.findById(userId);
-        if (userOpt.isEmpty()) {
-            return null;
-        }
-        return userOpt.get();
+        return userOpt.orElse(null);
     }
 
     @GetMapping("/register")
-    public String displayRegistrationForm(Model model, HttpSession session) {
+    public ResponseEntity<Map<String, String>> displayRegistrationForm(Model model, HttpSession session) {
         model.addAttribute(new RegistrationFormDTO());
-        // TODO: send value of loggedIn boolean
-        model.addAttribute("loggedIn", session.getAttribute(userSessionKey) != null);
-        return "register";
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "register endpoint reached");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
     public String processRegistrationForm(@ModelAttribute @Valid RegistrationFormDTO registrationFormDTO, Errors errors, HttpServletRequest request) {
-        // Send user back to the form if errors are found
         if (errors.hasErrors()) {
             return "register";
         }
@@ -68,21 +66,19 @@ public class AuthenticationController {
             return "register";
         }
 
-        //Assume all registration users are Admins
-        // Save new username & password, start a new session, and redirect to the home page
         User newUser = new User(registrationFormDTO.getUsername(), registrationFormDTO.getPassword(), "ADMIN");
         userRepository.save(newUser);
         setUserInSession(request.getSession(), newUser);
-        return "redirect:/all"; // I'm not sure where to redirect them to, so I chose all
+
+        return "redirect:/admin";
     }
 
     @GetMapping("/login")
-    public String displayLoginForm(Model model, HttpSession session) {
-        model.addAttribute(new LoginFormDTO()); //loginFormDTO
-        // TODO: send value of loggedIn boolean
-        model.addAttribute("loggedIn", session.getAttribute(userSessionKey) != null);
-
-        return "login";
+    public ResponseEntity<Map<String, String>> displayLoginForm(Model model, HttpSession session) {
+        model.addAttribute(new LoginFormDTO());
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "login endpoint reached");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
@@ -105,25 +101,12 @@ public class AuthenticationController {
         }
 
         setUserInSession(request.getSession(), theUser);
-
-
-        // Redirect based on role
-        if (theUser.getRole().equals("ADMIN")) {
-            return "redirect:/admin/control-panel"; // Adjust URL as needed
-        } else {
-            return "redirect:/user/dashboard"; // Adjust URL as needed
-        }
+        return "redirect:/admin";
     }
 
-    @GetMapping("/admin/control-panel")
-    public String displayAdminControlPanel(HttpSession session) {
-        User loggedInUser = getUserFromSession(session);
-
-        if (loggedInUser == null || !loggedInUser.getRole().equals("ADMIN")) {
-            return "redirect:/login"; // Redirect to login if not an admin
-        }
-
-        return "admin/control-panel"; // Return the view for admin control panel
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return "redirect:/login";
     }
-
 }
