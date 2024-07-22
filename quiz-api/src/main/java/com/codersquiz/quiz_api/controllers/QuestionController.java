@@ -93,7 +93,14 @@ public class QuestionController {
             questionToEdit.setOptionB(questionDetails.getOptionB());
             questionToEdit.setOptionC(questionDetails.getOptionC());
             questionToEdit.setOptionD(questionDetails.getOptionD());
-            questionToEdit.setTopic(questionDetails.getTopic());
+
+            Optional<Topic> optionalTopic = topicRepository.findById(questionDetails.getTopic().getId());
+            if (optionalTopic.isPresent()) {
+                questionToEdit.setTopic(optionalTopic.get());
+            } else {
+                throw new ResourceNotFoundException("Topic not found with id = " + questionDetails.getTopic().getId());
+            }
+
             return questionRepository.save(questionToEdit);
         } else {
             throw new ResourceNotFoundException("Question not found with id = " + questionId);
