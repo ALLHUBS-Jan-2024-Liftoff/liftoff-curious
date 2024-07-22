@@ -3,6 +3,8 @@ package com.codersquiz.quiz_api.controllers;
 import com.codersquiz.quiz_api.exceptions.ResourceNotFoundException;
 import com.codersquiz.quiz_api.models.Question;
 import com.codersquiz.quiz_api.models.Topic;
+import com.codersquiz.quiz_api.models.dto.BulkUploadDTO;
+import com.codersquiz.quiz_api.models.dto.QuestionUploadDTO;
 import com.codersquiz.quiz_api.repositories.QuestionRepository;
 import com.codersquiz.quiz_api.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -41,19 +44,42 @@ public class QuestionController {
     }
 
     @PostMapping
-    public Question createQuestion(@RequestBody Question newQuestion) {
-        return questionRepository.save(newQuestion);
+    public ResponseEntity<Question> createQuestion(@RequestBody QuestionUploadDTO questionDTO) {
+        Optional<Topic> optionalTopic = topicRepository.findById(questionDTO.getTopicId());
+        if (optionalTopic.isPresent()) {
+            Topic topic = optionalTopic.get();
+            Question newQuestion = new Question(
+                    questionDTO.getContent(),
+                    questionDTO.getAnswer(),
+                    questionDTO.getOptionA(),
+                    questionDTO.getOptionB(),
+                    questionDTO.getOptionC(),
+                    questionDTO.getOptionD(),
+                    topic
+            );
+            Question savedQuestion = questionRepository.save(newQuestion);
+            return new ResponseEntity<>(savedQuestion, HttpStatus.CREATED);
+        } else {
+            throw new ResourceNotFoundException("Topic not found with id " + questionDTO.getTopicId());
+        }
     }
 
-    //NEW BULK ADD
-    @PostMapping("/bulkadd")
-    public List<Question> bulkAddQuestion(@RequestBody List<Question> questions) {
-        // Iterate over each question in the list & save it to the repository
-        for (Question question : questions) {
-            questionRepository.save(question);
+    @PostMapping("/bulk-upload")
+    public ResponseEntity<String> bulkUploadQuestions(@RequestBody BulkUploadDTO bulkUploadDTO) {
+        List<QuestionUploadDTO> questionDTOs = bulkUploadDTO.getQuestions();
+        List<Question> questions = new ArrayList<>();
+
+        for (QuestionUploadDTO dto : questionDTOs) {
+            Optional<Topic> optionalTopic = topicRepository.findById(dto.getTopicId());
+            if (optionalTopic.isPresent()) {
+                Topic topic = optionalTopic.get();
+                Question question = new Question(dto.getContent(), dto.getAnswer(), dto.getOptionA(), dto.getOptionB(), dto.getOptionC(), dto.getOptionD(), topic);
+                questions.add(question);
+            }
         }
-        // Return the list of saved questions
-        return questions;
+
+        questionRepository.saveAll(questions);
+        return new ResponseEntity<>("Questions uploaded successfully", HttpStatus.OK);
     }
 
     @PutMapping("/{questionId}")
@@ -74,19 +100,25 @@ public class QuestionController {
         }
     }
 
-    @DeleteMapping("/{topicId}")
-    public ResponseEntity<String> deleteTopic(@PathVariable Long topicId) {
-        Optional<Topic> optionalTopic = topicRepository.findById(topicId);
-        if (optionalTopic.isPresent()) {
-            List<Question> linkedQuestions = questionRepository.findByTopicId(topicId);
-            if (!linkedQuestions.isEmpty()) {
-                return new ResponseEntity<>("Cannot delete topic. There are questions linked to this topic.", HttpStatus.BAD_REQUEST);
-            }
-            topicRepository.deleteById(topicId);
-            return new ResponseEntity<>("Topic deleted successfully", HttpStatus.OK);
+    @DeleteMapping("/{questionId}")
+    public ResponseEntity<String> deleteQuestion(@PathVariable Long questionId) {
+        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
+        if (optionalQuestion.isPresent()) {
+            questionRepository.deleteById(questionId);
+            return new ResponseEntity<>("Question deleted successfully", HttpStatus.OK);
         } else {
-            throw new ResourceNotFoundException("Topic not found with id " + topicId);
+            throw new ResourceNotFoundException("Question not found with id " + questionId);
         }
+    }
+
+    @DeleteMapping("/bulk-delete")
+    public ResponseEntity<String> bulkDeleteQuestions(@RequestBody List<Long> questionIds) {
+        List<Question> questionsToDelete = questionRepository.findAllById(questionIds);
+        if (questionsToDelete.isEmpty()) {
+            return new ResponseEntity<>("No questions found for the provided IDs", HttpStatus.NOT_FOUND);
+        }
+        questionRepository.deleteAll(questionsToDelete);
+        return new ResponseEntity<>("Questions deleted successfully", HttpStatus.OK);
     }
 
     @GetMapping

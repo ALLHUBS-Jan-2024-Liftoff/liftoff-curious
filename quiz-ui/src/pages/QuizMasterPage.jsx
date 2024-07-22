@@ -4,6 +4,7 @@ import TopicManagerComponent from '../components/TopicManagerComponent';
 import JumbotronComponent from '../components/JumbotronComponent';
 import AddQuestionComponent from '../components/AddQuestionComponent';
 import BrowseQuestionsComponent from '../components/BrowseQuestionsComponent';
+import BulkAddQuestionsComponent from '../components/BulkAddQuestionsComponent';
 
 function QuizMasterPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(false);
@@ -35,13 +36,7 @@ function QuizMasterPage() {
           <Accordion.Item eventKey="2">
             <Accordion.Header><h4>Bulk Add Questions</h4></Accordion.Header>
             <Accordion.Body>
-              Bulk Add Question will be added later in this space - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-              minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-              pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-              culpa qui officia deserunt mollit anim id est laborum.
+              <BulkAddQuestionsComponent/>
             </Accordion.Body>
           </Accordion.Item>
           <Accordion.Item eventKey="3">

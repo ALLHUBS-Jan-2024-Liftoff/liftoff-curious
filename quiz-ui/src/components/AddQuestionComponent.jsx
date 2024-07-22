@@ -11,7 +11,7 @@ const AddQuestionComponent = () => {
     optionC: '',
     optionD: '',
     answer: '',
-    topic: ''
+    topicId: ''
   });
   const [topics, setTopics] = useState([]);
   const [submitted, setSubmitted] = useState(false);
@@ -38,8 +38,7 @@ const AddQuestionComponent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const selectedTopic = topics.find(topic => topic.id === parseInt(question.topic));
-      await createQuestion({ ...question, topic: selectedTopic });
+      await createQuestion({ ...question, topicId: parseInt(question.topicId) });
       setSubmitted(true);
       setError(false);
       setQuestion({
@@ -49,7 +48,7 @@ const AddQuestionComponent = () => {
         optionC: '',
         optionD: '',
         answer: '',
-        topic: ''
+        topicId: ''
       });
     } catch (error) {
       console.error("There was an error creating the question!", error);
@@ -60,7 +59,7 @@ const AddQuestionComponent = () => {
 
   return (
     <div className="container mt-4">
-      <h2>Add New Question</h2>
+      <p>Please fill out the details to add a new question:</p>
       {submitted && <Alert variant="success">Question added successfully!</Alert>}
       {error && <Alert variant="danger">There was an error adding the question. Please try again.</Alert>}
       <Form onSubmit={handleSubmit}>
@@ -112,7 +111,7 @@ const AddQuestionComponent = () => {
           <Col lg={6}>
             <Form.Group>
               <Form.Label>Topic</Form.Label>
-              <Form.Control as="select" name="topic" value={question.topic} onChange={handleChange}>
+              <Form.Control as="select" name="topicId" value={question.topicId} onChange={handleChange}>
                 <option value="">Select a topic</option>
                 {topics.map((topic) => (
                   <option key={topic.id} value={topic.id}>{topic.name}</option>

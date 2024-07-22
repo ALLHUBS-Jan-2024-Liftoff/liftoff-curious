@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Table, Form, Row, Col, Dropdown } from 'react-bootstrap';
-import { getAllQuestions, updateQuestion, deleteQuestion } from '../services/questionService';
+import { Button, Modal, Table, Form, Row, Col, Dropdown, Alert } from 'react-bootstrap';
+import { getAllQuestions, updateQuestion, deleteQuestion, bulkDeleteQuestions } from '../services/questionService';
 import { getAllTopics } from '../services/topicService';
 
 const BrowseQuestionsComponent = ({ refreshTrigger }) => {
@@ -10,6 +10,9 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   const [show, setShow] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState(null);
+  const [selectedQuestions, setSelectedQuestions] = useState([]);
+  const [message, setMessage] = useState(null);
+  const [messageType, setMessageType] = useState(null);
 
   useEffect(() => {
     fetchQuestions();
@@ -42,7 +45,7 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   };
 
   const handleShow = (question) => {
-    setCurrentQuestion(question);
+    setCurrentQuestion({ ...question, topicId: question.topic ? question.topic.id : '' });
     setShow(true);
   };
 
@@ -53,8 +56,10 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
 
   const handleSave = async () => {
     try {
-      const selectedTopic = topics.find(topic => topic.id === parseInt(currentQuestion.topic.id));
-      await updateQuestion(currentQuestion.id, { ...currentQuestion, topic: selectedTopic });
+      await updateQuestion(currentQuestion.id, {
+        ...currentQuestion,
+        topicId: parseInt(currentQuestion.topicId)
+      });
       fetchQuestions();
       handleClose();
     } catch (error) {
@@ -74,14 +79,25 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
     }
   };
 
+  const handleBulkDelete = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete the selected questions?");
+    if (confirmDelete) {
+      try {
+        await bulkDeleteQuestions(selectedQuestions);
+        setMessageType('success');
+        setMessage('Selected questions deleted successfully.');
+        fetchQuestions();
+      } catch (error) {
+        setMessageType('danger');
+        setMessage('Error deleting selected questions.');
+        console.error("Error deleting questions:", error);
+      }
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "topic") {
-      const selectedTopic = topics.find(topic => topic.id === parseInt(value));
-      setCurrentQuestion({ ...currentQuestion, topic: selectedTopic });
-    } else {
-      setCurrentQuestion({ ...currentQuestion, [name]: value });
-    }
+    setCurrentQuestion({ ...currentQuestion, [name]: value });
   };
 
   const handleTopicSelect = (topicId) => {
@@ -93,27 +109,44 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
     }
   };
 
+  const handleSelectQuestion = (questionId) => {
+    setSelectedQuestions((prevSelected) => {
+      if (prevSelected.includes(questionId)) {
+        return prevSelected.filter(id => id !== questionId);
+      } else {
+        return [...prevSelected, questionId];
+      }
+    });
+  };
+
   return (
     <div className="container mt-4">
-      <div className="d-flex align-items-end">
-      <Dropdown className="mb-3 me-auto">
-        <Dropdown.Toggle variant="secondary" id="dropdown-basic" className="float-right">
-          Select A Topic to Filter
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          {topics.map((topic) => (
-            <Dropdown.Item key={topic.id} onClick={() => handleTopicSelect(topic.id)}>
-              {topic.name}
-            </Dropdown.Item>
-          ))}
-          <Dropdown.Divider />
-          <Dropdown.Item onClick={() => handleTopicSelect("all")}>All Topics</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+      <div className="d-flex align-items-end justify-content-between">
+        <Dropdown className="mb-3">
+          <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+            Select A Topic to Filter
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {topics.map((topic) => (
+              <Dropdown.Item key={topic.id} onClick={() => handleTopicSelect(topic.id)}>
+                {topic.name}
+              </Dropdown.Item>
+            ))}
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={() => handleTopicSelect("all")}>All Topics</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+        <Button variant="danger" className="mb-3" onClick={handleBulkDelete}>Delete Selected Questions</Button>
       </div>
+      {message && (
+        <Alert variant={messageType} className="mt-4">
+          {message}
+        </Alert>
+      )}
       <Table striped bordered hover>
         <thead>
           <tr>
+            <th>Select</th>
             <th>#</th>
             <th>Q-ID</th>
             <th>Question Text</th>
@@ -126,6 +159,13 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
         <tbody>
           {filteredQuestions.map((question, index) => (
             <tr key={question.id}>
+              <td>
+                <Form.Check
+                  type="checkbox"
+                  checked={selectedQuestions.includes(question.id)}
+                  onChange={() => handleSelectQuestion(question.id)}
+                />
+              </td>
               <td>{index + 1}</td>
               <td>{question.id}</td>
               <td>{question.content}</td>
@@ -199,7 +239,7 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
               </Form.Group>
               <Form.Group>
                 <Form.Label>Topic</Form.Label>
-                <Form.Control as="select" name="topic" value={currentQuestion.topic ? currentQuestion.topic.id : ''} onChange={handleChange}>
+                <Form.Control as="select" name="topicId" value={currentQuestion.topicId} onChange={handleChange}>
                   <option value="">Select a topic</option>
                   {topics.map((topic) => (
                     <option key={topic.id} value={topic.id}>{topic.name}</option>
