@@ -8,14 +8,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/quiz/questions")
@@ -25,13 +24,15 @@ public class AuthenticationController {
     private UserRepository userRepository;
 
     private static final String userSessionKey = "user";
+    private static final Logger logger = Logger.getLogger(AuthenticationController.class.getName());
 
     private static void setUserInSession(HttpSession session, User user) {
         session.setAttribute(userSessionKey, user.getId());
     }
 
+    // Get User From Session
     public User getUserFromSession(HttpSession session) {
-        Long userId = (Long) session.getAttribute(userSessionKey); // Use Long instead of Integer
+        Long userId = (Long) session.getAttribute(userSessionKey);
         if (userId == null) {
             return null;
         }
@@ -39,74 +40,65 @@ public class AuthenticationController {
         return userOpt.orElse(null);
     }
 
-    @GetMapping("/register")
-    public ResponseEntity<Map<String, String>> displayRegistrationForm(Model model, HttpSession session) {
-        model.addAttribute(new RegistrationFormDTO());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "register endpoint reached");
-        return ResponseEntity.ok(response);
-    }
-
+    // Process Registration Form for Web UI
     @PostMapping("/register")
-    public String processRegistrationForm(@ModelAttribute @Valid RegistrationFormDTO registrationFormDTO, Errors errors, HttpServletRequest request) {
+    public ResponseEntity<String> processRegistrationForm(@RequestBody @Valid RegistrationFormDTO registrationFormDTO, Errors errors, HttpServletRequest request) {
         if (errors.hasErrors()) {
-            return "register";
+            return new ResponseEntity<>("Validation errors", HttpStatus.BAD_REQUEST);
         }
 
         Optional<User> existingUser = userRepository.findByUsername(registrationFormDTO.getUsername());
         if (existingUser.isPresent()) {
-            errors.rejectValue("username", "username.alreadyExists", "A user with that username already exists");
-            return "register";
+            return new ResponseEntity<>("A user with that username already exists", HttpStatus.BAD_REQUEST);
         }
 
         String password = registrationFormDTO.getPassword();
         String verifyPassword = registrationFormDTO.getVerifyPassword();
         if (!password.equals(verifyPassword)) {
-            errors.rejectValue("password", "password.mismatch", "Passwords do not match");
-            return "register";
+            return new ResponseEntity<>("Passwords do not match", HttpStatus.BAD_REQUEST);
         }
 
-        User newUser = new User(registrationFormDTO.getUsername(), registrationFormDTO.getPassword(), "ADMIN");
+        // Use the role provided in the registration form, default to "USER" if not provided
+        String role = registrationFormDTO.getRole() != null ? registrationFormDTO.getRole() : "USER";
+
+        User newUser = new User(registrationFormDTO.getUsername(), registrationFormDTO.getPassword(), role);
         userRepository.save(newUser);
         setUserInSession(request.getSession(), newUser);
-
-        return "redirect:/admin";
+        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<Map<String, String>> displayLoginForm(Model model, HttpSession session) {
-        model.addAttribute(new LoginFormDTO());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "login endpoint reached");
-        return ResponseEntity.ok(response);
-    }
-
+    // Process Login Form for Web UI
     @PostMapping("/login")
-    public String processLoginForm(@ModelAttribute @Valid LoginFormDTO loginFormDTO, Errors errors, HttpServletRequest request) {
+    public ResponseEntity<String> processLoginForm(@RequestBody @Valid LoginFormDTO loginFormDTO, Errors errors, HttpServletRequest request) {
         if (errors.hasErrors()) {
-            return "login";
+            return new ResponseEntity<>("Validation errors", HttpStatus.BAD_REQUEST);
         }
 
         Optional<User> theUserOpt = userRepository.findByUsername(loginFormDTO.getUsername());
         if (theUserOpt.isEmpty()) {
-            errors.rejectValue("username", "login.invalid", "Credentials invalid. Please try again with correct username/password.");
-            return "login";
+            return new ResponseEntity<>("Credentials invalid", HttpStatus.UNAUTHORIZED);
         }
 
         User theUser = theUserOpt.get();
         String password = loginFormDTO.getPassword();
         if (!theUser.isMatchingPassword(password)) {
-            errors.rejectValue("password", "login.invalid", "Credentials invalid. Please try again with correct username/password.");
-            return "login";
+            return new ResponseEntity<>("Credentials invalid", HttpStatus.UNAUTHORIZED);
         }
 
         setUserInSession(request.getSession(), theUser);
-        return "redirect:/admin";
+        return new ResponseEntity<>("User logged in successfully", HttpStatus.OK);
     }
 
+    // Logout the User
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request) {
+    public ResponseEntity<String> logout(HttpServletRequest request) {
         request.getSession().invalidate();
-        return "redirect:/login";
+        return new ResponseEntity<>("User logged out successfully", HttpStatus.OK);
+    }
+
+    // Protected Endpoint
+    @GetMapping("/protected")
+    public ResponseEntity<String> protectedEndpoint() {
+        return new ResponseEntity<>("This is a protected route", HttpStatus.OK);
     }
 }
