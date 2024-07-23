@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HomeCarousel from '../components/HomeCarousel';
-import { getAllTopics } from '../services/topicService';
+import { getAllTopics, getTopicById } from '../services/topicService';
 import { getNQuestionsOnTopicX } from '../services/questionService';
 
 function HomePage() {
@@ -27,7 +27,15 @@ function HomePage() {
     e.preventDefault();
     try {
       const questions = await getNQuestionsOnTopicX(numQuestions, selectedTopic);
-      navigate('/quiz', { state: { questions } });
+      const topicObject = await getTopicById(selectedTopic);
+      const chosenTopic = topicObject.name; 
+      navigate('/quiz', {
+        state: {
+          questions,          // Passing the questions array
+          numQuestions,       // Passing the number of questions selected
+          chosenTopic         // Passing the name of the chosen topic
+        }
+      });
     } catch (error) {
       console.error('Error fetching questions:', error);
     }
