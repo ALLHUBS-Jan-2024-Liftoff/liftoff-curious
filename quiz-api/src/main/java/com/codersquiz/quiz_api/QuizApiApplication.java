@@ -15,7 +15,6 @@ public class QuizApiApplication {
 		SpringApplication.run(QuizApiApplication.class, args);
 	}
 
-	// this is to tackle with the CORS error
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {

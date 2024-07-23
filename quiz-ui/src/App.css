@@ -41,3 +41,10 @@ body {
     transform: rotate(360deg);
   }
 }
+
+.actions-column {
+  white-space: nowrap;
+}
+.actions-column button {
+  margin-right: 5px;
+}

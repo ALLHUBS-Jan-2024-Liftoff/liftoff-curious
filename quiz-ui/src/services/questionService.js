@@ -51,3 +51,18 @@ export const deleteQuestion = async (questionId) => {
     throw error;
   }
 };
+
+export const bulkDeleteQuestions = async (questionIds) => {
+  try {
+    const response = await axios.delete(`${BASEAPIURL}/quiz-api/questions/bulk-delete`, {
+      data: questionIds,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("There was an error deleting the questions!", error);
+    throw error;
+  }
+};
