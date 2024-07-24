@@ -15,15 +15,18 @@ import axiosAuthInstance from './services/axiosConfig';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
+  const [username, setUsername] = useState('admin')
 
-  const handleLogin = () => {
+  const handleLogin = (username) => {
     setAuthenticated(true);
+    setUsername(username);
   };
 
   const handleLogout = async () => {
     try {
       await axiosAuthInstance.get('/users/logout');
       setAuthenticated(false);
+      setUsername('');
     } catch (error) {
       console.error('Logout failed', error);
     }
@@ -61,7 +64,7 @@ function App() {
         },
         {
           path: '/quizmaster',
-          element: <QuizMaster onLogout={handleLogout} />,
+          element: <QuizMaster onLogout={handleLogout} username={username} />,
           loader: () => {
             if (!authenticated) {
               return redirect('/login');

@@ -12,7 +12,7 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
     try {
       await axiosPublicInstance.post('/users/login', { username, password });
-      onLogin();
+      onLogin(username);
       navigate('/quizmaster'); // Redirect to the QuizMaster page
     } catch (error) {
       console.error('Login failed', error);

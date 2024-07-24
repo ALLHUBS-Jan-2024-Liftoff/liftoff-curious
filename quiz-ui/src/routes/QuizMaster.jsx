@@ -8,7 +8,7 @@ import AddQuestionComponent from '../components/AddQuestionComponent';
 import BrowseQuestionsComponent from '../components/BrowseQuestionsComponent';
 import BulkAddQuestionsComponent from '../components/BulkAddQuestionsComponent';
 
-function QuizMaster({ onLogout }) {
+function QuizMaster({ onLogout, username }) {
   const [refreshTrigger, setRefreshTrigger] = useState(false);
 
   const handleSelect = (eventKey) => {
@@ -30,7 +30,7 @@ function QuizMaster({ onLogout }) {
       <div className="bg-light rounded pt-3 pb-1 mb-4">
         <div className="row">
           <div className="col col-12 col-lg-11 pt-lg-1">
-          <p className="text-center">Welcome, &lt;AdminName&gt;, to the Quizmaster Control!</p>
+          <p className="text-center">Welcome, {username}, to the Quizmaster Control!</p>
           </div>
           <div className="col col-12 col-lg-1">
           <p className="text-center text-lg-end"> 
