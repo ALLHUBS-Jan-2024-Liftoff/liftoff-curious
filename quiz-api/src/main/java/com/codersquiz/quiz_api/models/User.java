@@ -26,6 +26,13 @@ public class User {
         this.role = role;
     }
 
+    // Overloaded constructor to directly set hashed password
+    public User(String username, String passwordHash, String role, boolean isHashed) {
+        this.username = username;
+        this.passwordHash = isHashed ? passwordHash : encoder.encode(passwordHash);
+        this.role = role;
+    }
+
     public Long getId() {
         return id;
     }
