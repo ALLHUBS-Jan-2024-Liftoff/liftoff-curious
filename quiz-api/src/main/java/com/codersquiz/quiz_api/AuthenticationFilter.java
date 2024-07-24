@@ -44,6 +44,8 @@ public class AuthenticationFilter implements HandlerInterceptor {
         User user = authenticationController.getUserFromSession(session);
 
         if (user != null) {
+            // Check user role if needed
+            System.out.println("User role: " + user.getRole()); // Debug log
             return true;
         }
 
@@ -51,3 +53,4 @@ public class AuthenticationFilter implements HandlerInterceptor {
         return false;
     }
 }
+//this must work

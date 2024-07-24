@@ -1,9 +1,6 @@
 package com.codersquiz.quiz_api.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -21,17 +18,12 @@ public class User {
 
     private String role;
 
-    public User() {
-    }
+    public User() {}
 
     public User(String username, String password, String role) {
         this.username = username;
         this.passwordHash = encoder.encode(password);
         this.role = role;
-    }
-
-//    //this is a constructor recommended by intellij for line 72 in AuthenticationController (constructor overloading)
-    public User(String username, String password) {
     }
 
     public Long getId() {
@@ -42,6 +34,9 @@ public class User {
         return username;
     }
 
+    public String getPasswordHash() {
+        return passwordHash;
+    }
 
     public String getRole() {
         return role;
