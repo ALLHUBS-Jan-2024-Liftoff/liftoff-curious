@@ -24,7 +24,7 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await axiosAuthInstance.get('/users/logout');
+      await axiosAuthInstance.post('/users/logout');
       setAuthenticated(false);
       setUsername('');
     } catch (error) {

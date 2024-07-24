@@ -5,11 +5,14 @@ import com.codersquiz.quiz_api.models.dto.LoginFormDTO;
 import com.codersquiz.quiz_api.models.dto.RegistrationFormDTO;
 import com.codersquiz.quiz_api.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -100,15 +103,25 @@ public class AuthenticationController {
     }
 
     // Logout the User
-    @GetMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) {
+    // removed the Get mapping
+    // Because Post is the right method for logout
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         request.getSession().invalidate();
+        // Clear the security context
+        SecurityContextHolder.clearContext();
         return new ResponseEntity<>("User logged out successfully", HttpStatus.OK);
     }
 
-    // Protected Endpoint
+    // Protected Endpoint - this is probably not needed, but keeping it to test the actual logout and login status
     @GetMapping("/protected")
     public ResponseEntity<String> protectedEndpoint() {
-        return new ResponseEntity<>("This is a protected route", HttpStatus.OK);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String && authentication.getPrincipal().equals("anonymousUser"))) {
+            return new ResponseEntity<>("This is a protected route", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User is not authenticated", HttpStatus.UNAUTHORIZED);
+        }
     }
 }
