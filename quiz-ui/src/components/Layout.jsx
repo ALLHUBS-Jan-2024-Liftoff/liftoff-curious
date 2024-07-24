@@ -5,7 +5,7 @@ import FooterComponent from './FooterComponent'
 
 function Layout() {
   return (
-    <div className="container">
+    <div className="wrapper">
         <HeaderComponent/>
         <main>
             <Outlet/>

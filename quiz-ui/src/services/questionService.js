@@ -12,6 +12,21 @@ export const getAllQuestions = async () => {
   }
 };
 
+export const getNQuestionsOnTopicX = async (numq, topicId) => {
+  try {
+    const response = await axios.get(`${BASEAPIURL}/quiz-api/questions`, {
+      params: {
+        topic: topicId,
+        numq: numq
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("There was an error fetching the questions!", error);
+    throw error;
+  }
+};
+
 export const getQuestionById = async (questionId) => {
   try {
     const response = await axios.get(`${BASEAPIURL}/quiz-api/questions/${questionId}`);
