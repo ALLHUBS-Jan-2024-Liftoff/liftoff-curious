@@ -22,10 +22,6 @@ function HeaderComponent() {
           <span style={{color: "grey"}}>Quiz in Progress...</span>
         ) : (
           <>
-        <Navbar.Brand href="#home">Coders' Quiz</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/about">About</Nav.Link>
             <Nav.Link href="/trivia">Trivia</Nav.Link>
