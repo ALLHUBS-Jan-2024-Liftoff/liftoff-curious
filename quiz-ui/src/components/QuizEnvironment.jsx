@@ -5,10 +5,11 @@ import { useNavigate } from 'react-router-dom';
 function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   const navigate = useNavigate();
 
+  console.log('Number of questions:', numQuestions); // Add this line to check the value of numQuestions
+
   const [currentQnum, setCurrentQnum] = useState(1);
   const [timeRemaining, setTimeRemaining] = useState(numQuestions * 60);
   const [userAnswers, setUserAnswers] = useState(Array(numQuestions).fill(null));
-  const [attemptedQuestions, setAttemptedQuestions] = useState(0);
   const [markedForReview, setMarkedForReview] = useState(Array(numQuestions).fill(false));
 
   useEffect(() => {
@@ -31,13 +32,10 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const handleAnswerChange = (index, answer) => {
+  const handleAnswerChange = (answer) => {
     const newAnswers = [...userAnswers];
     newAnswers[currentQnum - 1] = answer;
     setUserAnswers(newAnswers);
-    if (newAnswers[currentQnum - 1] !== null) {
-      setAttemptedQuestions(newAnswers.filter((answer) => answer !== null).length);
-    }
   };
 
   const handleNextQuestion = () => {
@@ -81,12 +79,9 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
 
   const getQuestionLinkClass = (index) => {
     if (markedForReview[index]) {
-      if (userAnswers[index] !== null) {
-        return 'bg-warning text-dark';
-      }
-      return 'bg-warning text-muted';
+      return 'bg-warning text-dark';
     }
-    if (userAnswers[index] !== null) {
+    if (typeof userAnswers[index] === 'string' && userAnswers[index].trim() !== '') {
       return 'bg-success text-dark';
     }
     return 'bg-light text-dark';
@@ -104,7 +99,7 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
             name="question"
             value={question[option]}
             checked={userAnswers[currentQnum - 1] === question[option]}
-            onChange={(e) => handleAnswerChange(index, e.target.value)}
+            onChange={(e) => handleAnswerChange(e.target.value)}
           />
           <label className="form-check-label" htmlFor={`option${index}`}>
             {question[option]}
@@ -194,7 +189,7 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
               <div className="col pt-1">
                 <ProgressBar
                   variant="success"
-                  now={(attemptedQuestions / numQuestions) * 100}
+                  now={(userAnswers.filter((answer) => answer !== null).length / numQuestions) * 100}
                 />
               </div>
             </div>
@@ -203,17 +198,20 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
       </div>
       <div className="row py-3 py-lg-3">
         <div className="col-12 col-lg-10">
-          <div className="border rounded py-5 bg-light px-2 d-flex flex-wrap">
-            {Array.from({ length: numQuestions }, (_, index) => (
-              <div
-                key={index}
-                className={`rounded m-2 p-2 cursor-pointer ${getQuestionLinkClass(index)}`}
-                onClick={() => setCurrentQnum(index + 1)}
-                style={{ width: '40px', textAlign: 'center' }}
-              >
-                {index + 1}
-              </div>
-            ))}
+          <div className="border rounded py-3 bg-light px-2">
+            <div>Questions Grid:</div>
+            <div className="d-flex flex-wrap">
+              {Array.from({ length: numQuestions }, (_, index) => (
+                <div
+                  key={index}
+                  className={`rounded m-2 p-2 cursor-pointer ${getQuestionLinkClass(index)}`}
+                  onClick={() => setCurrentQnum(index + 1)}
+                  style={{ width: '40px', textAlign: 'center' }}
+                >
+                  {index + 1}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="col-12 col-lg-2 pt-2">

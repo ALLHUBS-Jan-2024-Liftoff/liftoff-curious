@@ -7,7 +7,7 @@ function FeedbackPage() {
   const { quizData } = location.state || { quizData: [] };
 
   const totalQuestions = quizData.length;
-  const attemptedQuestions = quizData.filter((q) => q.userAnswer !== null).length;
+  const attemptedQuestions = quizData.filter((q) => typeof q.userAnswer === 'string').length;
   const correctAnswers = quizData.filter((q) => q.userAnswer === q.answer).length;
   const wrongAnswers = attemptedQuestions - correctAnswers;
 
@@ -31,10 +31,10 @@ function FeedbackPage() {
             <td>{totalQuestions}</td>
             <td>{attemptedQuestions}</td>
             <td>
-              {correctAnswers} ({correctPercentage}%)
+              {correctAnswers} / {totalQuestions} ({correctPercentage}%)
             </td>
             <td>
-              {wrongAnswers} ({wrongPercentage}%)
+              {wrongAnswers} / {totalQuestions} ({wrongPercentage}%)
             </td>
           </tr>
         </tbody>

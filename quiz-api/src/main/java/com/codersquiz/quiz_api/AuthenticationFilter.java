@@ -20,7 +20,10 @@ public class AuthenticationFilter implements HandlerInterceptor {
     AuthenticationController authenticationController;
 
     // Whitelist
-    private static final List<String> whitelist = Arrays.asList("/", "/api", "/register", "/login");
+    private static final List<String> whitelist = Arrays.asList("/", "/api", "/register", "/login", "/users/register", "/users/login");
+    // NIL: come back and see if what this means
+    // - so these are backend routes
+    // - and it should be based on my controller @requestmapping path. so if it has users then include like /users/register and so on?
 
     private static boolean isWhitelisted(String path) {
         for (String pathRoot : whitelist) {
@@ -34,7 +37,8 @@ public class AuthenticationFilter implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         String requestURI = request.getRequestURI();
-        System.out.println("Request URI: " + requestURI); // Debug log
+        String method = request.getMethod();
+        System.out.println("Request URI: " + requestURI + ", Method: " + method); // Debug log
 
         if (isWhitelisted(requestURI)) {
             return true;
@@ -44,13 +48,18 @@ public class AuthenticationFilter implements HandlerInterceptor {
         User user = authenticationController.getUserFromSession(session);
 
         if (user != null) {
-            // Check user role if needed
+            System.out.println("User authenticated: " + user.getUsername()); // Debug log
             System.out.println("User role: " + user.getRole()); // Debug log
             return true;
         }
 
+        System.out.println("User not authenticated, redirecting to login"); // Debug log
         response.sendRedirect("/login");
+        // NIL: so this is backend route
+        // But this does not mean backend template, it can correspond to front end routes
+        // So, I need to create separate login and registration pages in front end
+        // When response.sendRedirect("/login") is called, it should navigate to the frontend login page.
+        // I need to ensure that my frontend is configured to handle this path correctly and present the login form.
         return false;
     }
 }
-//this must work
