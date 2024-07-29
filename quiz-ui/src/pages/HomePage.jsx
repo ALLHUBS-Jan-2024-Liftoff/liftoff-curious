@@ -89,9 +89,9 @@ function HomePage() {
                       type="range"
                       id="numQuestions"
                       className="form-range"
-                      min="5"
+                      min="2"
                       max="30"
-                      step="5"
+                      step="1"
                       value={numQuestions}
                       onChange={(e) => setNumQuestions(e.target.value)}
                     />

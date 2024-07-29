@@ -15,13 +15,14 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   const [markedForReview, setMarkedForReview] = useState(Array(numQuestions).fill(false));
   const [textToRead, setTextToRead] = useState(''); // State to hold the text for TTS
   const [isDarkMode, setIsDarkMode] = useState(false); // State to manage dark mode
+  const [isAutoSubmission, setIsAutoSubmission] = useState(false); // handling the auto submission after time is elapsed
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeRemaining((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(timer);
-          handleSubmitQuiz();
+          setIsAutoSubmission(true);
           return 0;
         }
         return prevTime - 1;
@@ -37,6 +38,12 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
       document.body.classList.remove('dark');
     }
   }, [isDarkMode]);
+
+  useEffect(() => {
+    if (isAutoSubmission) {
+      handleSubmitQuiz();
+    }
+  }, [isAutoSubmission]);
 
   const resetDarkMode = () => {
     setIsDarkMode(false);
@@ -90,11 +97,16 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   };
 
   const handleSubmitQuiz = () => {
-    const confirmSubmit = window.confirm("Are you sure you want to submit the quiz?");
+    let confirmSubmit = false;
+    if (isAutoSubmission) {
+      alert("Time is up! Your Quiz will be automatically submitted and graded!");
+      confirmSubmit = true;
+    } else {
+      confirmSubmit = window.confirm("Are you sure you want to submit the quiz?");
+    }
     if (confirmSubmit) {
       stopSpeech(); 
       resetDarkMode();
-      alert('Quiz is submitted, and you will view your feedback next');
       const quizData = questions.map((q, index) => ({
         ...q,
         userAnswer: userAnswers[index],
