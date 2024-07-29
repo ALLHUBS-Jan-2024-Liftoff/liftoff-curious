@@ -56,4 +56,33 @@ body.dark {
   }
 }
 
+/* new styles for answer options in QuizEnv */
+.answer-option {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background-color 0.3s;
+}
 
+.answer-option:hover {
+  background-color: #f0f0f0;
+}
+
+.answer-option:hover .mode-dark {
+  color: grey;
+}
+
+.answer-option.selected {
+  background-color: #d4edda;
+  border-color: #28a745;
+}
+
+.answer-option.selected .mode-dark {
+  /* background-color: #d4edda;
+  border-color: #28a745; */
+  color: black;
+}
