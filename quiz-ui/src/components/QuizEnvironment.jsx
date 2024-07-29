@@ -254,7 +254,8 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
                     stopSpeech(); // Stop speech when clicking a question number
                     setCurrentQnum(index + 1);
                   }}
-                  style={{ width: '40px', textAlign: 'center' }}
+                  title={`Navigate to Question #${index+1}`}
+                  style={{ width: '40px', textAlign: 'center', cursor: 'pointer' }}
                 >
                   {index + 1}
                 </div>
