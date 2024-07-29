@@ -3,6 +3,11 @@ body {
   background-image: url('../public/assets/images/03-light-carpet.png');
 }
 
+body.dark {
+  background-color: #282c34;
+  background-image: none;
+}
+
 .App {
   text-align: center;
 }

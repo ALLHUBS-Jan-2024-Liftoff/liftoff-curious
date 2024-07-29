@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 const TextToSpeech = ({ text }) => {
   useEffect(() => {
     if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // Stop any ongoing speech
       const utterance = new SpeechSynthesisUtterance(text);
       window.speechSynthesis.speak(utterance);
     } else {
@@ -11,9 +12,12 @@ const TextToSpeech = ({ text }) => {
   }, [text]);
 
   return (
-    <div>
+    <>
+    {/* <div className="border rounded bg-light p-2">
+        <p>Reading the question out loud...</p>
       <p>{text}</p>
-    </div>
+    </div> */}
+    </>
   );
 };
 
