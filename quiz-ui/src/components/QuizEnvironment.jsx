@@ -105,7 +105,7 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
 
   const handleListenToIt = () => {
     const currentQuestion = questions[currentQnum - 1];
-    const text = `Question: ${currentQuestion.content} Options: A. ${currentQuestion.optionA}, B. ${currentQuestion.optionB}, C. ${currentQuestion.optionC}, D. ${currentQuestion.optionD}`;
+    const text = `Question: ...${currentQuestion.content} ... Option A. ... ${currentQuestion.optionA}, Option B. ... ${currentQuestion.optionB}, Option C. ... ${currentQuestion.optionC}, or Option D. ... ${currentQuestion.optionD}`;
     setTextToRead(text);
   };
 
@@ -218,7 +218,11 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
       <div className="row">
         <div className="col-12 col-lg-2 order-lg-last">
           <p className="text-start text-lg-end">
-            <Button variant="success btn-lg my-1" onClick={handleSaveAndNext}>
+            <Button
+              variant="success btn-lg my-1"
+              onClick={handleSaveAndNext}
+              disabled={currentQnum === numQuestions} // Disable if it's the last question
+            >
               Save & Next
             </Button>
           </p>
