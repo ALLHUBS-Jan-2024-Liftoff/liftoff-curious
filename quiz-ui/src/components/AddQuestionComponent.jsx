@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, Form, Row, Col, Alert } from 'react-bootstrap';
 import { createQuestion } from '../services/questionService';
 import { getAllTopics } from '../services/topicService';
+import AuthContext from '../context/AuthContext';
 
 const AddQuestionComponent = () => {
+  const { authenticated } = useContext(AuthContext);
   const [question, setQuestion] = useState({
     content: '',
     optionA: '',
@@ -18,8 +20,10 @@ const AddQuestionComponent = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetchTopics();
-  }, []);
+    if (authenticated) {
+      fetchTopics();
+    }
+  }, [authenticated]);
 
   const fetchTopics = async () => {
     try {
@@ -37,6 +41,10 @@ const AddQuestionComponent = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!authenticated) {
+      setError(true);
+      return;
+    }
     try {
       await createQuestion({ ...question, topicId: parseInt(question.topicId) });
       setSubmitted(true);
