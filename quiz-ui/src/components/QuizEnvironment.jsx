@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, ProgressBar } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import TextToSpeech from './TextToSpeech'; // Import the TextToSpeech component
 
 function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   const [timeRemaining, setTimeRemaining] = useState(numQuestions * 60);
   const [userAnswers, setUserAnswers] = useState(Array(numQuestions).fill(null));
   const [markedForReview, setMarkedForReview] = useState(Array(numQuestions).fill(false));
+  const [textToRead, setTextToRead] = useState(''); // State to hold the text for TTS
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -72,6 +74,12 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
     const newMarkedForReview = [...markedForReview];
     newMarkedForReview[currentQnum - 1] = !newMarkedForReview[currentQnum - 1];
     setMarkedForReview(newMarkedForReview);
+  };
+
+  const handleListenToIt = () => {
+    const currentQuestion = questions[currentQnum - 1];
+    const text = `Question: ${currentQuestion.content}. Options: A. ${currentQuestion.optionA}, B. ${currentQuestion.optionB}, C. ${currentQuestion.optionC}, D. ${currentQuestion.optionD}`;
+    setTextToRead(text);
   };
 
   const currentQuestion = questions[currentQnum - 1];
@@ -170,7 +178,7 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
         </div>
         <div className="col-12 col-lg-2 pt-2 pt-lg-0">
           <p className="text-end">
-            <Button variant="secondary btn-lg">Listen To It</Button>
+            <Button variant="secondary btn-lg" onClick={handleListenToIt}>Listen To It</Button>
           </p>
         </div>
       </div>
@@ -231,6 +239,8 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
           </div>
         </div>
       </div>
+      {/* Render the TextToSpeech component with the text to read */}
+      <TextToSpeech text={textToRead} />
     </div>
   );
 }
