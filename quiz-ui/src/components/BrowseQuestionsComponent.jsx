@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Button, Modal, Table, Form, Row, Col, Dropdown, Alert } from 'react-bootstrap';
 import { getAllQuestions, updateQuestion, deleteQuestion, bulkDeleteQuestions } from '../services/questionService';
 import { getAllTopics } from '../services/topicService';
+import AuthContext from '../context/AuthContext';
 
 const BrowseQuestionsComponent = ({ refreshTrigger }) => {
+  const { authenticated } = useContext(AuthContext);
   const [questions, setQuestions] = useState([]);
   const [filteredQuestions, setFilteredQuestions] = useState([]);
   const [topics, setTopics] = useState([]);
@@ -17,15 +19,17 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   const [isBulkDeleteDisabled, setIsBulkDeleteDisabled] = useState(true);
 
   useEffect(() => {
-    fetchQuestions();
-    fetchTopics();
-  }, []);
+    if (authenticated) {
+      fetchQuestions();
+      fetchTopics();
+    }
+  }, [authenticated]);
 
   useEffect(() => {
-    if (refreshTrigger) {
+    if (refreshTrigger && authenticated) {
       fetchQuestions();
     }
-  }, [refreshTrigger]);
+  }, [refreshTrigger, authenticated]);
 
   const fetchQuestions = async () => {
     try {
@@ -140,6 +144,10 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
     }
     return str.slice(0, num) + '...';
   };
+
+  if (!authenticated) {
+    return <p>Please log in to view the questions.</p>;
+  }
 
   return (
     <div className="container mt-4">
