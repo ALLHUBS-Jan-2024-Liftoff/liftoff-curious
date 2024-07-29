@@ -86,3 +86,9 @@ body.dark {
   border-color: #28a745; */
   color: black;
 }
+
+@media print {
+  .feedback-section {
+    page-break-inside: avoid;
+  }
+}

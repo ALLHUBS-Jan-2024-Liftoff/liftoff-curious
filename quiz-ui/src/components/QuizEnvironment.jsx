@@ -140,7 +140,7 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
         ...q,
         userAnswer: userAnswers[index],
       }));
-      navigate('/feedback', { state: { quizData } });
+      navigate('/feedback', { state: { quizData, topic: chosenTopic } });
     }
   };
 
