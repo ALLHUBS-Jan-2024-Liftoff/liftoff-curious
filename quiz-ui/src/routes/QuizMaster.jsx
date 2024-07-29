@@ -36,7 +36,7 @@ function QuizMaster() {
   return (
     <>
       <JumbotronComponent backgroundImage={'https://placehold.co/1600x400/3186F7/3186F7/png'} pageName={"Quiz Master"} />
-      <div className="p-lg-4" style={{ minHeight: '600px', backgroundColor: 'white' }}>
+      <div className="p-1 p-lg-4" style={{ minHeight: '600px', backgroundColor: 'white' }}>
         <div className="bg-light rounded pt-3 pb-1 mb-4">
           <div className="row">
             <div className="col col-12 col-lg-11 pt-lg-1">
@@ -58,7 +58,7 @@ function QuizMaster() {
             <Accordion.Header>
               <h4>Browse Questions (View/Edit/Delete)</h4>
             </Accordion.Header>
-            <Accordion.Body>
+            <Accordion.Body className="p-1 p-lg-4">
               <BrowseQuestionsComponent refreshTrigger={refreshTrigger} />
             </Accordion.Body>
           </Accordion.Item>

@@ -17,6 +17,21 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null);
   const [isBulkDeleteDisabled, setIsBulkDeleteDisabled] = useState(true);
+  const [selectAll, setSelectAll] = useState(false); // State to keep track of whether all checkboxes are selected
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (authenticated) {
@@ -130,9 +145,25 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
 
   const handleSelectQuestion = (questionId) => {
     setSelectedQuestions((prevSelected) => {
-      const newSelected = prevSelected.includes(questionId)
-        ? prevSelected.filter(id => id !== questionId)
-        : [...prevSelected, questionId];
+      let newSelected;
+      if (questionId === 'all') { // Change here
+        if (selectAll) { // Change here
+          newSelected = []; // Change here
+          setSelectAll(false); // Change here
+        } else {
+          newSelected = questions.map(question => question.id); // Change here
+          setSelectAll(true); // Change here
+        }
+      } else {
+        newSelected = prevSelected.includes(questionId)
+          ? prevSelected.filter(id => id !== questionId)
+          : [...prevSelected, questionId];
+        if (newSelected.length === questions.length) {
+          setSelectAll(true); // Change here
+        } else {
+          setSelectAll(false); // Change here
+        }
+      }
       setIsBulkDeleteDisabled(newSelected.length === 0);
       return newSelected;
     });
@@ -150,7 +181,7 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container p-0 mt-4">
       <div className="d-flex align-items-end justify-content-between">
         <Dropdown className="mb-3">
           <Dropdown.Toggle variant="secondary" id="dropdown-basic">
@@ -172,7 +203,7 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
           onClick={handleBulkDelete}
           disabled={isBulkDeleteDisabled}
         >
-          Delete Selected Questions
+          <span className="d-flex d-lg-none">Delete Selected</span><span className="d-none d-lg-flex">Delete Selected Questions</span>
         </Button>
       </div>
       {message && (
@@ -180,10 +211,16 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
           {message}
         </Alert>
       )}
-      <Table striped bordered hover>
+      <Table striped bordered hover responsive>
         <thead>
           <tr>
-            <th>&#10003;</th>
+            <th>
+              <Form.Check // Change here
+                type="checkbox" // Change here
+                checked={selectAll} // Change here
+                onChange={() => handleSelectQuestion('all')} // Change here
+              />
+            </th>
             <th>#</th>
             <th>ID</th>
             <th>Question</th>
@@ -203,16 +240,18 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
               </td>
               <td>{index + 1}</td>
               <td>{question.id}</td>
-              <td>{truncateString(`Q: ${question.content} Ans: ${question.answer} Choices: A) ${question.optionA}, B) ${question.optionB}, C) ${question.optionC}, D) ${question.optionD}`, 200)}</td>
+              <td>
+                  {truncateString(`Q: ${question.content} Ans: ${question.answer} Choices: A) ${question.optionA}, B) ${question.optionB}, C) ${question.optionC}, D) ${question.optionD}`, screenWidth >= 800 ? 200 : 50)}
+              </td>
               <td>{question.topic ? question.topic.name : 'No Topic'}</td>
               <td className="actions-column">
-                <Button variant="info" onClick={() => handleViewShow(question)} className="me-2">
+                <Button variant="info" onClick={() => handleViewShow(question)} className="me-lg-2 mb-1">
                   <i className="fas fa-eye text-white"></i>
                 </Button>
-                <Button variant="warning" onClick={() => handleShow(question)} className="me-2">
+                <Button variant="warning" onClick={() => handleShow(question)} className="me-lg-2 mb-1">
                   <i className="fas fa-edit text-white"></i>
                 </Button>
-                <Button variant="danger" onClick={() => handleDelete(question.id)}>
+                <Button variant="danger" onClick={() => handleDelete(question.id)} className="me-lg-2 mb-1">
                   <i className="fas fa-trash-alt text-white"></i>
                 </Button>
               </td>

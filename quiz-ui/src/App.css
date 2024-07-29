@@ -47,9 +47,13 @@ body.dark {
   }
 }
 
-.actions-column {
-  white-space: nowrap;
+@media screen and (min-width: 800px) {
+  .actions-column {
+    white-space: nowrap;
+  }
+  .actions-column button {
+    margin-right: 5px;
+  }
 }
-.actions-column button {
-  margin-right: 5px;
-}
+
+
