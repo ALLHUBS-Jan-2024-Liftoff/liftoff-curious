@@ -80,21 +80,27 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   };
 
   const handleAbortQuiz = () => {
-    stopSpeech(); 
-    resetDarkMode();
-    alert('Quiz Aborted');
-    navigate('/');
+    const confirmAbort = window.confirm("Are you sure you want to abort the quiz?");
+    if (confirmAbort) {
+      stopSpeech(); 
+      resetDarkMode();
+      alert('Quiz is Aborted. You will be redirected to the Home Page now.');
+      navigate('/');
+    }
   };
 
   const handleSubmitQuiz = () => {
-    stopSpeech(); 
-    resetDarkMode();
-    alert('Quiz Submitted');
-    const quizData = questions.map((q, index) => ({
-      ...q,
-      userAnswer: userAnswers[index],
-    }));
-    navigate('/feedback', { state: { quizData } });
+    const confirmSubmit = window.confirm("Are you sure you want to submit the quiz?");
+    if (confirmSubmit) {
+      stopSpeech(); 
+      resetDarkMode();
+      alert('Quiz is submitted, and you will view your feedback next');
+      const quizData = questions.map((q, index) => ({
+        ...q,
+        userAnswer: userAnswers[index],
+      }));
+      navigate('/feedback', { state: { quizData } });
+    }
   };
 
   const handleMarkForReview = () => {
