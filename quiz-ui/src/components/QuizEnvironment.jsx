@@ -1,23 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, ProgressBar } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import TextToSpeech from './TextToSpeech'; // Import the TextToSpeech component
+import '../App.css'; // the CSS file contains the css code for body with dark class
 
 function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   const navigate = useNavigate();
 
-  console.log('Number of questions:', numQuestions); // Add this line to check the value of numQuestions
+  //console.log('Number of questions:', numQuestions); // check the value of numQuestions
 
   const [currentQnum, setCurrentQnum] = useState(1);
   const [timeRemaining, setTimeRemaining] = useState(numQuestions * 60);
   const [userAnswers, setUserAnswers] = useState(Array(numQuestions).fill(null));
   const [markedForReview, setMarkedForReview] = useState(Array(numQuestions).fill(false));
+  const [textToRead, setTextToRead] = useState(''); // State to hold the text for TTS
+  const [isDarkMode, setIsDarkMode] = useState(false); // State to manage dark mode
+  const [isAutoSubmission, setIsAutoSubmission] = useState(false); // handling the auto submission after time is elapsed
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeRemaining((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(timer);
-          handleSubmitQuiz();
+          setIsAutoSubmission(true);
           return 0;
         }
         return prevTime - 1;
@@ -25,6 +30,31 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    if (isAutoSubmission) {
+      handleSubmitQuiz();
+    }
+  }, [isAutoSubmission]);
+
+  const resetDarkMode = () => {
+    setIsDarkMode(false);
+    document.body.classList.remove('dark');
+  };
+
+  const stopSpeech = () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  };
 
   const formatTime = (totalSeconds) => {
     const minutes = Math.floor(totalSeconds / 60);
@@ -41,12 +71,14 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   const handleNextQuestion = () => {
     if (currentQnum < numQuestions) {
       setCurrentQnum(currentQnum + 1);
+      stopSpeech(); 
     }
   };
 
   const handlePrevQuestion = () => {
     if (currentQnum > 1) {
       setCurrentQnum(currentQnum - 1);
+      stopSpeech(); 
     }
   };
 
@@ -55,23 +87,48 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   };
 
   const handleAbortQuiz = () => {
-    alert('Quiz Aborted');
-    navigate('/');
+    const confirmAbort = window.confirm("Are you sure you want to abort the quiz?");
+    if (confirmAbort) {
+      stopSpeech(); 
+      resetDarkMode();
+      alert('Quiz is Aborted. You will be redirected to the Home Page now.');
+      navigate('/');
+    }
   };
 
   const handleSubmitQuiz = () => {
-    alert('Quiz Submitted');
-    const quizData = questions.map((q, index) => ({
-      ...q,
-      userAnswer: userAnswers[index],
-    }));
-    navigate('/feedback', { state: { quizData } });
+    let confirmSubmit = false;
+    if (isAutoSubmission) {
+      alert("Time is up! Your Quiz will be automatically submitted and graded!");
+      confirmSubmit = true;
+    } else {
+      confirmSubmit = window.confirm("Are you sure you want to submit the quiz?");
+    }
+    if (confirmSubmit) {
+      stopSpeech(); 
+      resetDarkMode();
+      const quizData = questions.map((q, index) => ({
+        ...q,
+        userAnswer: userAnswers[index],
+      }));
+      navigate('/feedback', { state: { quizData } });
+    }
   };
 
   const handleMarkForReview = () => {
     const newMarkedForReview = [...markedForReview];
     newMarkedForReview[currentQnum - 1] = !newMarkedForReview[currentQnum - 1];
     setMarkedForReview(newMarkedForReview);
+  };
+
+  const handleListenToIt = () => {
+    const currentQuestion = questions[currentQnum - 1];
+    const text = `Question: ...${currentQuestion.content} ... Option A. ... ${currentQuestion.optionA}, Option B. ... ${currentQuestion.optionB}, Option C. ... ${currentQuestion.optionC}, or Option D. ... ${currentQuestion.optionD}`;
+    setTextToRead(text);
+  };
+
+  const handleToggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
   };
 
   const currentQuestion = questions[currentQnum - 1];
@@ -82,7 +139,7 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
       return 'bg-warning text-dark';
     }
     if (typeof userAnswers[index] === 'string' && userAnswers[index].trim() !== '') {
-      return 'bg-success text-dark';
+      return 'bg-success text-light';
     }
     return 'bg-light text-dark';
   };
@@ -110,8 +167,8 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   );
 
   return (
-    <div className="bg-white p-3 p-lg-5" style={{ minHeight: '600px' }}>
-      <div className="bg-light border rounded pt-3 pb-1 mb-3 mb-lg-4">
+    <div className={`bg-${isDarkMode ? 'dark' : 'white'} p-3 p-lg-5 text-${isDarkMode ? 'light' : 'dark'}`} style={{ minHeight: '600px' }}>
+      <div className={`bg-${isDarkMode ? 'secondary' : 'light'} border rounded pt-3 pb-1 mb-3 mb-lg-4`}>
         <p className="text-center">
           Quiz on {chosenTopic}, playing for {numQuestions} questions
         </p>
@@ -126,7 +183,7 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
             >
               &lt; Prev
             </Button>
-            <span className="bg-light rounded py-3 px-3 mx-2 mx-lg-3">
+            <span className={`bg-${isDarkMode ? 'secondary' : 'light'} rounded py-3 px-3 mx-2 mx-lg-3`}>
               {`Question # ${currentQnum} / ${numQuestions}`}
             </span>
             <Button
@@ -139,7 +196,7 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
           </p>
         </div>
         <div className="col-12 col-lg-4 py-2 p-lg-1">
-          <div className="bg-light rounded py-2">
+          <div className={`bg-${isDarkMode ? 'secondary' : 'light'} rounded py-2`}>
             <center>
               <span className={isTimeRunningOut ? 'text-danger' : ''}>
                 Time Remaining: {formatTime(timeRemaining)} /{' '}
@@ -150,11 +207,13 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
         </div>
         <div className="col-12 col-lg-4 d-flex justify-content-between justify-content-lg-end">
           <span>
-            <Button variant="secondary btn-lg mx-2 my-1">Dark Mode</Button>
+            <Button variant="secondary btn-lg mx-lg-2 my-1" onClick={handleToggleDarkMode}>
+              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+            </Button>
           </span>
           <span>
             <Button
-              variant="secondary btn-lg mx-2 my-1 me-lg-0"
+              variant="secondary btn-lg mx-lg-2 my-1 me-lg-0"
               onClick={handleMarkForReview}
             >
               {markedForReview[currentQnum - 1] ? 'Unmark/End Review' : 'Mark for Review'}
@@ -170,20 +229,24 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
         </div>
         <div className="col-12 col-lg-2 pt-2 pt-lg-0">
           <p className="text-end">
-            <Button variant="secondary btn-lg">Listen To It</Button>
+            <Button variant="secondary btn-lg" onClick={handleListenToIt}>Listen To It</Button>
           </p>
         </div>
       </div>
       <div className="row">
         <div className="col-12 col-lg-2 order-lg-last">
           <p className="text-start text-lg-end">
-            <Button variant="success btn-lg my-1" onClick={handleSaveAndNext}>
+            <Button
+              variant="success btn-lg my-1"
+              onClick={handleSaveAndNext}
+              disabled={currentQnum === numQuestions} // Disable if it's the last question
+            >
               Save & Next
             </Button>
           </p>
         </div>
         <div className="col-12 col-lg-10 pt-2">
-          <div className="bg-light rounded p-2">
+          <div className={`bg-${isDarkMode ? 'secondary' : 'light'} rounded p-2`}>
             <div className="row">
               <div className="col-auto">Progress:</div>
               <div className="col pt-1">
@@ -198,15 +261,19 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
       </div>
       <div className="row py-3 py-lg-3">
         <div className="col-12 col-lg-10">
-          <div className="border rounded py-3 bg-light px-2">
+          <div className={`border rounded py-3 bg-${isDarkMode ? 'secondary' : 'light'} px-2`}>
             <div>Questions Grid:</div>
             <div className="d-flex flex-wrap">
               {Array.from({ length: numQuestions }, (_, index) => (
                 <div
                   key={index}
                   className={`rounded m-2 p-2 cursor-pointer ${getQuestionLinkClass(index)}`}
-                  onClick={() => setCurrentQnum(index + 1)}
-                  style={{ width: '40px', textAlign: 'center' }}
+                  onClick={() => {
+                    stopSpeech(); // Stop speech when clicking a question number
+                    setCurrentQnum(index + 1);
+                  }}
+                  title={`Navigate to Question #${index+1}`}
+                  style={{ width: '40px', textAlign: 'center', cursor: 'pointer' }}
                 >
                   {index + 1}
                 </div>
@@ -231,6 +298,8 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
           </div>
         </div>
       </div>
+      {/* Render the TextToSpeech component with the text to read */}
+      <TextToSpeech text={textToRead} />
     </div>
   );
 }
