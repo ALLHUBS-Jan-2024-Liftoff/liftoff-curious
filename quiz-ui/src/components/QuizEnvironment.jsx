@@ -1,13 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Button, ProgressBar } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import TextToSpeech from './TextToSpeech'; // Import the TextToSpeech component
 import '../App.css'; // the CSS file contains the css code for body with dark class
 
+const QuestionDisplay = React.memo(({ question, currentQnum, userAnswers, handleAnswerChange, isDarkMode }) => {
+  const optionLabels = ['A', 'B', 'C', 'D'];
+
+  return (
+    <div className="mb-4 p-2">
+      <h6 className="mb-3">Question: {question.content}</h6>
+      {['optionA', 'optionB', 'optionC', 'optionD'].map((option, index) => (
+        <div
+          key={index}
+          className={`answer-option ${userAnswers[currentQnum - 1] === question[option] ? 'selected' : ''}`}
+          onClick={() => handleAnswerChange(question[option])}
+        >
+          <input
+            className="form-check-input"
+            type="radio"
+            id={`option${index}`}
+            name="question"
+            value={question[option]}
+            checked={userAnswers[currentQnum - 1] === question[option]}
+            onChange={(e) => handleAnswerChange(e.target.value)}
+            style={{ marginRight: '10px' }}
+          />
+          <label className={`form-check-label mode-${isDarkMode ? 'dark' : 'light'}`} htmlFor={`option${index}`}>
+            {`${optionLabels[index]}) ${question[option]}`}
+          </label>
+        </div>
+      ))}
+    </div>
+  );
+});
+
 function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
   const navigate = useNavigate();
-
-  //console.log('Number of questions:', numQuestions); // check the value of numQuestions
 
   const [currentQnum, setCurrentQnum] = useState(1);
   const [timeRemaining, setTimeRemaining] = useState(numQuestions * 60);
@@ -62,11 +91,11 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const handleAnswerChange = (answer) => {
+  const handleAnswerChange = useCallback((answer) => {
     const newAnswers = [...userAnswers];
     newAnswers[currentQnum - 1] = answer;
     setUserAnswers(newAnswers);
-  };
+  }, [userAnswers, currentQnum]);
 
   const handleNextQuestion = () => {
     if (currentQnum < numQuestions) {
@@ -144,28 +173,6 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
     return 'bg-light text-dark';
   };
 
-  const QuestionDisplay = ({ question }) => (
-    <div className="mb-4">
-      <h6 className="mb-3">Q. {question.content}</h6>
-      {['optionA', 'optionB', 'optionC', 'optionD'].map((option, index) => (
-        <div key={index} className="form-check mb-2">
-          <input
-            className="form-check-input"
-            type="radio"
-            id={`option${index}`}
-            name="question"
-            value={question[option]}
-            checked={userAnswers[currentQnum - 1] === question[option]}
-            onChange={(e) => handleAnswerChange(e.target.value)}
-          />
-          <label className="form-check-label" htmlFor={`option${index}`}>
-            {question[option]}
-          </label>
-        </div>
-      ))}
-    </div>
-  );
-
   return (
     <div className={`bg-${isDarkMode ? 'dark' : 'white'} p-3 p-lg-5 text-${isDarkMode ? 'light' : 'dark'}`} style={{ minHeight: '600px' }}>
       <div className={`bg-${isDarkMode ? 'secondary' : 'light'} border rounded pt-3 pb-1 mb-3 mb-lg-4`}>
@@ -196,7 +203,7 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
           </p>
         </div>
         <div className="col-12 col-lg-4 py-2 p-lg-1">
-          <div className={`bg-${isDarkMode ? 'secondary' : 'light'} rounded py-2`}>
+          <div className={`bg-${isTimeRunningOut ? 'warning' : isDarkMode ? 'secondary' : 'light'} rounded py-2`}>
             <center>
               <span className={isTimeRunningOut ? 'text-danger' : ''}>
                 Time Remaining: {formatTime(timeRemaining)} /{' '}
@@ -224,7 +231,13 @@ function QuizEnvironment({ questions, numQuestions, chosenTopic }) {
       <div className="row py-2 py-lg-3">
         <div className="col-12 col-lg-10">
           <div className="border rounded py-3 px-2" style={{ minHeight: '20rem' }}>
-            <QuestionDisplay question={currentQuestion} />
+            <QuestionDisplay
+              question={currentQuestion}
+              currentQnum={currentQnum}
+              userAnswers={userAnswers}
+              handleAnswerChange={handleAnswerChange}
+              isDarkMode={isDarkMode}
+            />
           </div>
         </div>
         <div className="col-12 col-lg-2 pt-2 pt-lg-0">
