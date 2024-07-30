@@ -73,7 +73,7 @@ public class AuthenticationController {
 
         //System.out.println("I am here, role created");
 
-        User newUser = new User(registrationFormDTO.getName(), registrationFormDTO.getUsername(), registrationFormDTO.getPassword(), role);
+        User newUser = new User(registrationFormDTO.getName(),registrationFormDTO.getEmail(), registrationFormDTO.getUsername(), registrationFormDTO.getPassword(), role);
         userRepository.save(newUser);
         setUserInSession(request.getSession(), newUser);
         logger.info("User registered successfully: " + newUser.getUsername());
