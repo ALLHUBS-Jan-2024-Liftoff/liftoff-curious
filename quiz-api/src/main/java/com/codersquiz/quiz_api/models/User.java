@@ -10,7 +10,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String name;
+
+    @NotNull
+    private String email;
 
     @NotNull
     private String username;
@@ -22,16 +26,18 @@ public class User {
 
     public User() {}
 
-    public User(String name, String username, String password, String role) {
+    public User(String name, String email, String username, String password, String role) {
         this.name = name;
+        this.email = email;
         this.username = username;
         this.passwordHash = encoder.encode(password);
         this.role = role;
     }
 
     // Overloaded constructor to directly set hashed password
-    public User(String name, String username, String passwordHash, String role, boolean isHashed) {
+    public User(String name, String email, String username, String passwordHash, String role, boolean isHashed) {
         this.name = name;
+        this.email = email;
         this.username = username;
         this.passwordHash = isHashed ? passwordHash : encoder.encode(passwordHash);
         this.role = role;
@@ -43,6 +49,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Long getId() {

@@ -6,16 +6,17 @@ import AuthContext from '../context/AuthContext';
 
 const Register = () => {
   const [name, setName] = useState('');
+  const [email, setEmail] = useState ('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [verifyPassword, setVerifyPassword] = useState('');
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const { login } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosPublicInstance.post('/users/register', { name, username, password, verifyPassword });
+      await axiosPublicInstance.post('/users/register', { name, email, username, password, verifyPassword });
       login(username);
       navigate('/quizmaster');
     } catch (error) {
@@ -43,6 +44,17 @@ const Register = () => {
                 placeholder="Name"
               />
             </div>
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required={true}
+                placeholder="Email"
+              />
+            </div>
+
             <div className="mb-3">
               <input
                 type="text"
