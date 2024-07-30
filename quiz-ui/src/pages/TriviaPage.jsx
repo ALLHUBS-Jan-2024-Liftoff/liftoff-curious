@@ -61,7 +61,7 @@ const TriviaPage = () => {
     const handleSubmit = () => {
         let correctAnswers = 0;
         questions.forEach((question, index) => {
-            if (answers[index] === question.correct_answer) {
+            if (answers[index] && answers[index] === question.correct_answer) {
                 correctAnswers++;
             }
         });
@@ -136,7 +136,7 @@ const TriviaPage = () => {
                                 <div key={index} className="mb-3 p-3 border rounded">
                                     <p>{he.decode(question.question)}</p>
                                     <p>
-                                        Your answer: <span className="fw-normal">{he.decode(answers[index])}</span>
+                                        Your answer: <span className="fw-normal">{he.decode(answers[index] || "No answer")}</span>
                                         {answers[index] === question.correct_answer ? (
                                             <span className="badge bg-success ms-2">✓ Correct</span>
                                         ) : (

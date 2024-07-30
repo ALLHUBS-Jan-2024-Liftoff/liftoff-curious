@@ -13,9 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -48,59 +51,73 @@ public class AuthenticationController {
     }
 
     // Process Registration Form for Web UI
+    // Registration
     @PostMapping("/register")
-    public ResponseEntity<String> processRegistrationForm(@RequestBody @Valid RegistrationFormDTO registrationFormDTO, Errors errors, HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> processRegistrationForm(@RequestBody @Valid RegistrationFormDTO registrationFormDTO, Errors errors, HttpServletRequest request) {
+        Map<String, String> response = new HashMap<>();
         if (errors.hasErrors()) {
-            logger.warning("Validation errors during registration: " + errors.toString());
-            return new ResponseEntity<>("Validation errors", HttpStatus.BAD_REQUEST);
+            response.put("message", "Validation errors");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
         Optional<User> existingUser = userRepository.findByUsername(registrationFormDTO.getUsername());
         if (existingUser.isPresent()) {
-            logger.warning("Attempt to register with an existing username: " + registrationFormDTO.getUsername());
-            return new ResponseEntity<>("A user with that username already exists", HttpStatus.BAD_REQUEST);
+            response.put("message", "A user with that username already exists");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
         String password = registrationFormDTO.getPassword();
         String verifyPassword = registrationFormDTO.getVerifyPassword();
         if (!password.equals(verifyPassword)) {
-            logger.warning("Passwords do not match for user: " + registrationFormDTO.getUsername());
-            return new ResponseEntity<>("Passwords do not match", HttpStatus.BAD_REQUEST);
+            response.put("message", "Passwords do not match");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        // Use the role provided in the registration form, default to "USER" if not provided
+        final String secretCodeHash = "$2a$10$P7jSr2dAckYPEL9d5GWG4Olc6an7118AyO67N8uGupkmZeeVdx9Ru";
+        String secretCode = registrationFormDTO.getSecretCode();
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        boolean didMatch = encoder.matches(secretCode, secretCodeHash);
+        if (!didMatch) {
+            response.put("message", "Secret Code does not match");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
         String role = registrationFormDTO.getRole() != null ? registrationFormDTO.getRole() : "USER";
-
-        //System.out.println("I am here, role created");
-
-        User newUser = new User(registrationFormDTO.getName(),registrationFormDTO.getEmail(), registrationFormDTO.getUsername(), registrationFormDTO.getPassword(), role);
+        User newUser = new User(registrationFormDTO.getName(), registrationFormDTO.getEmail(), registrationFormDTO.getUsername(), registrationFormDTO.getPassword(), role);
         userRepository.save(newUser);
         setUserInSession(request.getSession(), newUser);
-        logger.info("User registered successfully: " + newUser.getUsername());
-        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+
+        response.put("message", "User registered successfully");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // Process Login Form for Web UI
+    // Login
     @PostMapping("/login")
-    public ResponseEntity<String> processLoginForm(@RequestBody @Valid LoginFormDTO loginFormDTO, Errors errors, HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> processLoginForm(@RequestBody @Valid LoginFormDTO loginFormDTO, Errors errors, HttpServletRequest request) {
+        Map<String, String> response = new HashMap<>();
         if (errors.hasErrors()) {
-            return new ResponseEntity<>("Validation errors", HttpStatus.BAD_REQUEST);
+            response.put("message", "Validation errors");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
         Optional<User> theUserOpt = userRepository.findByUsername(loginFormDTO.getUsername());
         if (theUserOpt.isEmpty()) {
-            return new ResponseEntity<>("Credentials invalid", HttpStatus.UNAUTHORIZED);
+            response.put("message", "Credentials invalid");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
 
         User theUser = theUserOpt.get();
         String password = loginFormDTO.getPassword();
         if (!theUser.isMatchingPassword(password)) {
-            return new ResponseEntity<>("Credentials invalid", HttpStatus.UNAUTHORIZED);
+            response.put("message", "Credentials invalid");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
 
         setUserInSession(request.getSession(), theUser);
-        return new ResponseEntity<>("User logged in successfully", HttpStatus.OK);
+        response.put("message", "User logged in successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     // Logout the User
     // removed the Get mapping

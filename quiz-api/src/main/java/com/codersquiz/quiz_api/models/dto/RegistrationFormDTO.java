@@ -19,6 +19,10 @@ public class RegistrationFormDTO extends LoginFormDTO {
     @Size(min = 10, max = 30, message = "Email must be 10-30 characters long")
     private String email;
 
+    @NotBlank(message = "Secret Code is required")
+    @Size(min = 8, max = 20, message = "Secret Code must be 8-20 characters long")
+    private String secretCode;
+
     private String role;
 
     public String getVerifyPassword() {
@@ -43,4 +47,8 @@ public class RegistrationFormDTO extends LoginFormDTO {
 
     public String getEmail(){ return email;}
     public void setEmail(String email){ this.email = email; }
+
+    public String getSecretCode() {
+        return secretCode;
+    }
 }
