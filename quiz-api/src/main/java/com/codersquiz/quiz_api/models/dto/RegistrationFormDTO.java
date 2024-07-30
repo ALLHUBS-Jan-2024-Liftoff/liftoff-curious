@@ -11,6 +11,10 @@ public class RegistrationFormDTO extends LoginFormDTO {
     @Size(min = 8, max = 30, message = "Password verification must be 8-30 characters long")
     private String verifyPassword;
 
+    @NotBlank(message = "Name is required")
+    @Size(min = 3, max = 20, message = "Name must be 3-20 characters long")
+    private String name;
+
     private String role;
 
     public String getVerifyPassword() {
@@ -28,4 +32,7 @@ public class RegistrationFormDTO extends LoginFormDTO {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 }

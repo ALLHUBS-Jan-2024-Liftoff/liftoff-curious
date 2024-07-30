@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AuthContext from '../context/AuthContext';
 
 const Register = () => {
+  const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [verifyPassword, setVerifyPassword] = useState('');
@@ -14,7 +15,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosPublicInstance.post('/users/register', { username, password, verifyPassword });
+      await axiosPublicInstance.post('/users/register', { name, username, password, verifyPassword });
       login(username);
       navigate('/quizmaster');
     } catch (error) {
@@ -32,6 +33,16 @@ const Register = () => {
             <h5 className="card-title">REGISTER</h5>
           </div>
           <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required={true}
+                placeholder="Name"
+              />
+            </div>
             <div className="mb-3">
               <input
                 type="text"
