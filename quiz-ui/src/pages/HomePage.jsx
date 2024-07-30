@@ -101,6 +101,7 @@ function HomePage() {
                   <button type="submit" className="btn btn-primary">Take the Quiz</button>
                 </form>
               </div>
+              <p className='text-center mt-2'>Need a break from coding topics? <a href="/trivia">Play Trivia</a> instead!</p>
             </div>
           </div>
         </div>
