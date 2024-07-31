@@ -20,7 +20,7 @@ public class AuthenticationFilter implements HandlerInterceptor {
     AuthenticationController authenticationController;
 
     // Whitelist
-    private static final List<String> whitelist = Arrays.asList("/", "/api", "/register", "/login", "/users/register", "/users/login");
+    private static final List<String> whitelist = Arrays.asList("/", "/api", "/register", "/login", "/users/register", "/users/login", "/send-email");
     // NIL: come back and see if what this means
     // - so these are backend routes
     // - and it should be based on my controller @requestmapping path. so if it has users then include like /users/register and so on?
