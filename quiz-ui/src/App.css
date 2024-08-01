@@ -47,12 +47,22 @@ body.dark {
   }
 }
 
+.navbar-logo {
+  width: 80px;
+}
+
 @media screen and (min-width: 800px) {
   .actions-column {
     white-space: nowrap;
   }
   .actions-column button {
     margin-right: 5px;
+  }
+}
+
+@media screen and (max-width: 675px) {
+  .navbar-logo {
+    width: 50px;
   }
 }
 
