@@ -23,11 +23,11 @@ const Login = () => {
   };
 
   return (
-    <div className="p-lg-4 bg-light" style={{ minHeight: '750px' }}>
-      <div className="bg-info pt-3 pb-1 mb-4 rounded">
+    <div className="p-lg-4 bg-light pb-5" style={{ minHeight: '850px' }}>
+      <div className="bg-info pt-3 pb-1 mb-4 rounded-lg-up">
         <p className="text-center">Are you an Admin User? If yes, please login to access the Quizmaster Control!</p>
       </div>
-      <div className="card" style={{ width: '500px', maxWidth: '100%', margin: 'auto', marginTop: '50px', padding: '20px' }}>
+      <div className="card rounded-lg-up-card" style={{ width: '500px', maxWidth: '100%', margin: 'auto', marginTop: '50px', padding: '20px' }}>
         <div className="card-body">
           <div className="d-flex justify-content-between mb-3">
             <h5 className="card-title">LOG IN</h5>

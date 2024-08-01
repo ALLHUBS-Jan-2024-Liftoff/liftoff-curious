@@ -8,7 +8,9 @@ import JumbotronComponent from '../components/JumbotronComponent';
 import AddQuestionComponent from '../components/AddQuestionComponent';
 import BrowseQuestionsComponent from '../components/BrowseQuestionsComponent';
 import BulkAddQuestionsComponent from '../components/BulkAddQuestionsComponent';
+import CommentManagerComponent from '../components/CommentManagerComponent';
 import AuthContext from '../context/AuthContext';
+import ManageAdminProfileComponent from '../components/ManageAdminProfileComponent';
 
 function QuizMaster() {
   const { authenticated, username, logout } = useContext(AuthContext);
@@ -54,7 +56,15 @@ function QuizMaster() {
           </div>
         </div>
         <Accordion defaultActiveKey="0" onSelect={handleSelect}>
-          <Accordion.Item eventKey="0">
+        <Accordion.Item eventKey="0">
+            <Accordion.Header>
+              <h4>Manage My Admin Profile</h4>
+            </Accordion.Header>
+            <Accordion.Body className="p-1 p-lg-4">
+              <ManageAdminProfileComponent username={username}/>
+            </Accordion.Body>
+          </Accordion.Item>
+          <Accordion.Item eventKey="1">
             <Accordion.Header>
               <h4>Browse Questions (View/Edit/Delete)</h4>
             </Accordion.Header>
@@ -62,7 +72,7 @@ function QuizMaster() {
               <BrowseQuestionsComponent refreshTrigger={refreshTrigger} />
             </Accordion.Body>
           </Accordion.Item>
-          <Accordion.Item eventKey="1">
+          <Accordion.Item eventKey="2">
             <Accordion.Header>
               <h4>Add A Question</h4>
             </Accordion.Header>
@@ -70,7 +80,7 @@ function QuizMaster() {
               <AddQuestionComponent />
             </Accordion.Body>
           </Accordion.Item>
-          <Accordion.Item eventKey="2">
+          <Accordion.Item eventKey="3">
             <Accordion.Header>
               <h4>Bulk Add Questions</h4>
             </Accordion.Header>
@@ -78,7 +88,7 @@ function QuizMaster() {
               <BulkAddQuestionsComponent />
             </Accordion.Body>
           </Accordion.Item>
-          <Accordion.Item eventKey="3">
+          <Accordion.Item eventKey="4">
             <Accordion.Header>
               <h4>Manage Topics (CRUD)</h4>
             </Accordion.Header>
@@ -86,12 +96,12 @@ function QuizMaster() {
               <TopicManagerComponent />
             </Accordion.Body>
           </Accordion.Item>
-          <Accordion.Item eventKey="4">
+          <Accordion.Item eventKey="5">
             <Accordion.Header>
-              <h4>Manage Comments (CRUD)</h4>
+              <h4>Manage Comments (View/Edit/Delete)</h4>
             </Accordion.Header>
             <Accordion.Body>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              <CommentManagerComponent/>
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>

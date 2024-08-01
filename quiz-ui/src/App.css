@@ -102,3 +102,21 @@ body.dark {
     page-break-inside: avoid;
   }
 }
+
+.active {
+  color: white !important;
+}
+
+.rounded-lg-up-card {
+  border-radius: 0 !important;
+}
+
+@media (min-width: 992px) { 
+  .rounded-lg-up {
+    border-radius: .25rem; 
+  }
+
+  .rounded-lg-up-card {
+    border-radius: 0.35rem !important;
+  }
+}
