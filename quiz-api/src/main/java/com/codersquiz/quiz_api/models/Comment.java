@@ -16,7 +16,7 @@ public class Comment {
     private String content;
     private String authorName; // Display name of the user
     private String email;      // Email of the user who made the comment
-    private LocalDateTime createdAt;
+    //private LocalDateTime createdAt;
     private Boolean status;    // true for approved, false for not approved
 
     // No-argument constructor
@@ -24,11 +24,11 @@ public class Comment {
 
    //Constructor
 
-    public Comment(String content, String authorName, String email, LocalDateTime createdAt, Boolean status) {
+    public Comment(String content, String authorName, String email, Boolean status) {
         this.content = content;
         this.authorName = authorName;
         this.email = email;
-        this.createdAt = createdAt;
+        //this.createdAt = createdAt;
         this.status = status;
     }
 
@@ -68,13 +68,13 @@ public class Comment {
         this.email = email;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+//    public LocalDateTime getCreatedAt() {
+//        return createdAt;
+//    }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public void setCreatedAt(LocalDateTime createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     public Boolean getStatus() {
         return status;
