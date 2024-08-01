@@ -1,10 +1,6 @@
 import React from 'react'
 import JumbotronComponent from '../components/JumbotronComponent'
 
-// import nilImage from '../assets/images/nil.png';
-// import hectorImage from '../assets/images/hector.png';
-// import molaleniImage from '../assets/images/molaleni.png';
-
 import nilImage from '../profilephotos/Nil.jpeg';
 import hectorImage from '../profilephotos/hector.jpeg';
 import molaleniImage from '../profilephotos/Molaleni.jpeg';
@@ -27,15 +23,7 @@ Plus, Coders’ Quiz is free for everyone, making it an accessible resource for 
     {/* Grid container for Meet the Team */}
     <div className='row'>
       <div className='col col-12 col-lg-6 rounded order-last order-lg-first'>
-        <h4>Meet the Team</h4>
-        <div className="team-member d-flex align-items-center mb-3">
-                                <img src={nilImage} className="rounded-circle mr-3" alt="Photo of Niladri" width="100" height="100" />
-                                <div className='ps-3'>
-                                   
-                                    <p> <span className='me-2' style={{fontSize:'130%',fontWeight:'700'}}>Niladri</span>GitHub: <a href="https://github.com/nil-sj">nil-sj</a></p>
-                                    <p style={{marginTop:'-0.8rem'}}>Nil is a front-end enthusiast who crafts stunning and intuitive user interfaces. When he's not creating, he loves exploring the great outdoors for inspiration.</p>
-                                </div>
-                            </div>
+        <h4>Meet the Quiz Coders</h4>
                             <div className="team-member d-flex align-items-center mb-3">
                                 <img src={hectorImage} className="rounded-circle mr-3" alt="Photo of Hector" width="100" height="100" />
                                 <div className='ps-3'>
@@ -50,6 +38,14 @@ Plus, Coders’ Quiz is free for everyone, making it an accessible resource for 
                                    
                                     <p> <span className='me-2' style={{fontSize:'130%',fontWeight:'700'}}>Molaleni</span> GitHub: <a href="https://github.com/molalenim">molalenim</a></p>
                                     <p style={{marginTop:'-0.8rem'}}>When Molaleni isn’t being a Master of the Coderverse, specializing in both backend and frontend development, you’ll find him immersed in the world of vintage cameras—some nearly a century old. He crafts seamless user experiences that blend code and creativity.</p>
+                                </div>
+                            </div>
+                            <div className="team-member d-flex align-items-center mb-3">
+                                <img src={nilImage} className="rounded-circle mr-3" alt="Photo of Niladri" width="100" height="100" />
+                                <div className='ps-3'>
+                                   
+                                    <p> <span className='me-2' style={{fontSize:'130%',fontWeight:'700'}}>Niladri</span>GitHub: <a href="https://github.com/nil-sj">nil-sj</a></p>
+                                    <p style={{marginTop:'-0.8rem'}}>Nil is a front-end enthusiast who crafts stunning and intuitive user interfaces. When he's not creating, he loves exploring the great outdoors for inspiration.</p>
                                 </div>
                             </div>
                         </div>
