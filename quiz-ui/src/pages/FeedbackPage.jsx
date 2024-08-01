@@ -128,7 +128,7 @@ function FeedbackPage() {
                   <label className="form-check-label" htmlFor={`option${index}-${i}`}>
                     <span className="badge bg-light text-dark me-2">Option {String.fromCharCode(65 + i)}:</span> {question[optionKey]}
                     {question.userAnswer === question[optionKey] && (
-                      <span
+                      <span style={{ backgroundColor: question.userAnswer === question.answer ? '#198754' : '#dc3545', color: 'white' }}
                         className={`badge ms-2 ${question.userAnswer === question.answer ? 'bg-success' : 'bg-danger'}`}
                       >
                         {question.userAnswer === question.answer ? '✓ Your Answer' : '✗ Your Answer'}
