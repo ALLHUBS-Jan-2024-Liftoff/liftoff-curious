@@ -14,7 +14,7 @@ function HeaderComponent() {
     <header>
       <Navbar expand="lg" className="bg-body-tertiary" data-bs-theme="dark">
       <Container>
-      {isQuizInProgress ? (<Navbar.Brand>Coders' Quiz</Navbar.Brand>) : (<Navbar.Brand href="/">Coders' Quiz</Navbar.Brand>)}
+      {isQuizInProgress ? (<Navbar.Brand><img className="navbar-logo" src="./assets/images/Coders-Quiz-Logo_200x200_PNG.png" alt="Coders' Quiz"/></Navbar.Brand>) : (<Navbar.Brand href="/"><img className="navbar-logo" src="./assets/images/Coders-Quiz-Logo_200x200_PNG.png" alt="Coders' Quiz"/></Navbar.Brand>)}
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
