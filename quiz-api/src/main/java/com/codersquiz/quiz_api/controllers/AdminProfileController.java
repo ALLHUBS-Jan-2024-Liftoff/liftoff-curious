@@ -46,6 +46,7 @@ public class AdminProfileController {
             user.setEmail(adminProfileDTO.getEmail());
             user.setPasswordHash(passwordEncoder.encode(adminProfileDTO.getPassword()));
             userRepository.save(user);
+            System.out.println("User profile is updated with new details :)");
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
