@@ -128,7 +128,7 @@ function ContactPage() {
                 <div key={comment.id} className="mb-3">
                   <h5>{comment.authorName}</h5>
                   <p>{comment.content}</p>
-                  <small>{comment.email}</small>
+                  {/* <small>{comment.email}</small> */}
                 </div>
               ))
             ) : (
