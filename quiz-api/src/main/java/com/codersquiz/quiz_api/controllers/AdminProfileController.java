@@ -44,7 +44,11 @@ public class AdminProfileController {
             User user = userOptional.get();
             user.setName(adminProfileDTO.getName());
             user.setEmail(adminProfileDTO.getEmail());
-            user.setPasswordHash(passwordEncoder.encode(adminProfileDTO.getPassword()));
+
+            //for when you don't want to change the password, but only want to change other fields
+            if (adminProfileDTO.getPassword() != null && !adminProfileDTO.getPassword().isEmpty()) {
+                user.setPasswordHash(passwordEncoder.encode(adminProfileDTO.getPassword()));
+            }
             userRepository.save(user);
             System.out.println("User profile is updated with new details :)");
             return ResponseEntity.ok().build();
@@ -53,4 +57,6 @@ public class AdminProfileController {
         }
     }
 }
+
+
 

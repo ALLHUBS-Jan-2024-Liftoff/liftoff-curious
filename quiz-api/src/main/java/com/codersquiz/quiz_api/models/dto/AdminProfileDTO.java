@@ -13,7 +13,7 @@ public class AdminProfileDTO {
     @Size(min = 10, max = 30, message = "Email must be 10-30 characters long")
     private String email;
 
-    @NotBlank(message = "Password is required")
+//    @NotBlank(message = "Password is required") makes the password optional, if user doesn't want to change password everytime they update the profile
     @Size(min = 8, max = 30, message = "Password must be 8-30 characters long")
     private String password;
 
