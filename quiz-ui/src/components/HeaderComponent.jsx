@@ -39,19 +39,19 @@ function HeaderComponent() {
                 <span style={{ color: 'grey' }}>Quiz in Progress...</span>
               ) : (
                 <>
-                  <Nav.Link as={NavLink} to="/" exact activeClassName="active" onClick={handleNavLinkClick}>
+                  <Nav.Link as={NavLink} to="/" end className={({ isActive }) => isActive ? 'active' : ''} onClick={handleNavLinkClick}>
                     Home
                   </Nav.Link>
-                  <Nav.Link as={NavLink} to="/about" activeClassName="active" onClick={handleNavLinkClick}>
+                  <Nav.Link as={NavLink} to="/about" className={({ isActive }) => isActive ? 'active' : ''} onClick={handleNavLinkClick}>
                     About
                   </Nav.Link>
-                  <Nav.Link as={NavLink} to="/trivia" activeClassName="active" onClick={handleNavLinkClick}>
+                  <Nav.Link as={NavLink} to="/trivia" className={({ isActive }) => isActive ? 'active' : ''} onClick={handleNavLinkClick}>
                     Trivia
                   </Nav.Link>
-                  <Nav.Link as={NavLink} to="/contact" activeClassName="active" onClick={handleNavLinkClick}>
+                  <Nav.Link as={NavLink} to="/contact" className={({ isActive }) => isActive ? 'active' : ''} onClick={handleNavLinkClick}>
                     Contact
                   </Nav.Link>
-                  <Nav.Link as={NavLink} to="/quizmaster" activeClassName="active" onClick={handleNavLinkClick}>
+                  <Nav.Link as={NavLink} to="/quizmaster" className={({ isActive }) => isActive ? 'active' : ''} onClick={handleNavLinkClick}>
                     Admin
                   </Nav.Link>
                 </>

@@ -14,7 +14,12 @@ const ManageAdminProfileComponent = ({ username }) => {
       const fetchProfile = async () => {
         try {
           const response = await axios.get(`http://localhost:8080/adminprofile/${username}`);
-          setProfile(response.data);
+          const data = response.data;
+          setProfile({
+            name: data.name || "",
+            email: data.email || "",
+            password: "" // Do not prefill password
+          });
           setLoading(false);
         } catch (err) {
           setMessage("Error fetching profile");
@@ -45,7 +50,7 @@ const ManageAdminProfileComponent = ({ username }) => {
       if (!updatedProfile.password) {
         delete updatedProfile.password; // Remove password field if it is empty
       }
-      console.log("Updating profile with data: ", updatedProfile);
+      //console.log("Updating profile with data: ", updatedProfile);
       await axios.put(`http://localhost:8080/adminprofile/${username}`, updatedProfile);
       setMessage("Profile updated successfully");
       setMessageType("success"); // Set message type to success
