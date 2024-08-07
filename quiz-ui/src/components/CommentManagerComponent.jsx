@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Button, Table } from 'react-bootstrap';
+import axios from 'axios';
 
 function CommentManagerComponent() {
   const [comments, setComments] = useState([]);
@@ -11,9 +13,8 @@ function CommentManagerComponent() {
 
   const fetchComments = async () => {
     try {
-      const response = await fetch("http://localhost:8080/comments/all");
-      const data = await response.json();
-      setComments(data);
+      const response = await axios.get("http://localhost:8080/comments/all");
+      setComments(response.data);
     } catch (error) {
       console.error("Error fetching comments:", error);
     }
@@ -21,14 +22,10 @@ function CommentManagerComponent() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/comments/${id}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        setComments(comments.filter(comment => comment.id !== id));
-      } else {
-        console.error("Failed to delete comment");
-      }
+        await axios.delete(`http://localhost:8080/comments/${id}`);
+        setComments((prevComments) =>
+          prevComments.filter((comment) => comment.id !== id)
+        );   
     } catch (error) {
       console.error("Error deleting comment:", error);
     }
@@ -48,16 +45,15 @@ function CommentManagerComponent() {
       ...comment,
       status: updatedStatus,
     };
-
+  
     try {
-      const response = await fetch(`http://localhost:8080/comments/${comment.id}`, {
-        method: "PUT",
+      const response = await axios.put(`http://localhost:8080/comments/${comment.id}`, updatedComment, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedComment),
       });
-      if (response.ok) {
+  
+      if (response.status === 200) {
         setComments(comments.map(c => c.id === comment.id ? updatedComment : c));
         setEditCommentId(null);
       } else {
@@ -70,9 +66,9 @@ function CommentManagerComponent() {
 
   return (
     <div>
-      <h4>Manage Comments</h4>
+      <h5>Review, Approve/Unapprove Comments below: </h5>
       {comments.length > 0 ? (
-        <table className="table">
+        <Table striped bordered hover responsive className="mt-3">
           <thead>
             <tr>
               <th>ID</th>
@@ -87,12 +83,12 @@ function CommentManagerComponent() {
             {comments.map((comment) => (
               <tr key={comment.id}>
                 <td>{comment.id}</td>
-                <td>{comment.authorName}</td>
-                <td>{comment.email}</td>
-                <td>{comment.content}</td>
-                <td>
+                <td className="text-wrap text-break">{comment.authorName}</td>
+                <td className="text-wrap text-break">{comment.email}</td>
+                <td className="text-wrap text-break">{comment.content}</td>
+                <td className="text-wrap text-break">
                   {editCommentId === comment.id ? (
-                    <select value={updatedStatus} onChange={handleStatusChange}>
+                    <select class="form-control" value={updatedStatus} onChange={handleStatusChange}>
                       <option value="true">Approved</option>
                       <option value="false">Not Approved</option>
                     </select>
@@ -102,31 +98,31 @@ function CommentManagerComponent() {
                 </td>
                 <td>
                   {editCommentId === comment.id ? (
-                    <button 
+                    <Button 
                       className="btn btn-success"
                       onClick={() => handleSave(comment)}
                     >
                       Save
-                    </button>
+                    </Button>
                   ) : (
-                    <button 
+                    <Button 
                       className="btn btn-primary"
                       onClick={() => handleEdit(comment)}
                     >
                       Edit
-                    </button>
+                    </Button>
                   )}
-                  <button 
-                    className="btn btn-danger"
+                  <Button 
+                    className="btn btn-danger ms-lg-2 mt-2 mt-lg-0"
                     onClick={() => handleDelete(comment.id)}
                   >
                     Delete
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       ) : (
         <p>No comments to manage.</p>
       )}
