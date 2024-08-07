@@ -5,7 +5,7 @@ import axios from 'axios';
 function CommentManagerComponent() {
   const [comments, setComments] = useState([]);
   const [editCommentId, setEditCommentId] = useState(null);
-  const [updatedStatus, setUpdatedStatus] = useState(false);
+  const [editableComment, setEditableComment] = useState(null);
 
   useEffect(() => {
     fetchComments();
@@ -22,10 +22,10 @@ function CommentManagerComponent() {
 
   const handleDelete = async (id) => {
     try {
-        await axios.delete(`http://localhost:8080/comments/${id}`);
-        setComments((prevComments) =>
-          prevComments.filter((comment) => comment.id !== id)
-        );   
+      await axios.delete(`http://localhost:8080/comments/${id}`);
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment.id !== id)
+      );
     } catch (error) {
       console.error("Error deleting comment:", error);
     }
@@ -33,34 +33,34 @@ function CommentManagerComponent() {
 
   const handleEdit = (comment) => {
     setEditCommentId(comment.id);
-    setUpdatedStatus(comment.status);
+    setEditableComment({ ...comment });
   };
 
-  const handleStatusChange = (event) => {
-    setUpdatedStatus(event.target.value === "true");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditableComment((prevComment) => ({
+      ...prevComment,
+      [name]: name === "status" ? value === "true" : value,
+    }));
   };
 
-  const handleSave = async (comment) => {
-    const updatedComment = {
-      ...comment,
-      status: updatedStatus,
-    };
-  
+  const handleSave = async () => {
     try {
-      const response = await axios.put(`http://localhost:8080/comments/${comment.id}`, updatedComment, {
+      const response = await axios.put(`http://localhost:8080/comments/${editableComment.id}`, editableComment, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-  
+
       if (response.status === 200) {
-        setComments(comments.map(c => c.id === comment.id ? updatedComment : c));
+        setComments(comments.map(c => c.id === editableComment.id ? editableComment : c));
         setEditCommentId(null);
+        setEditableComment(null);
       } else {
-        console.error("Failed to update approval status");
+        console.error("Failed to update comment");
       }
     } catch (error) {
-      console.error("Error updating approval status:", error);
+      console.error("Error updating comment:", error);
     }
   };
 
@@ -83,12 +83,53 @@ function CommentManagerComponent() {
             {comments.map((comment) => (
               <tr key={comment.id}>
                 <td>{comment.id}</td>
-                <td className="text-wrap text-break">{comment.authorName}</td>
-                <td className="text-wrap text-break">{comment.email}</td>
-                <td className="text-wrap text-break">{comment.content}</td>
                 <td className="text-wrap text-break">
                   {editCommentId === comment.id ? (
-                    <select class="form-control" value={updatedStatus} onChange={handleStatusChange}>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="authorName"
+                      value={editableComment.authorName}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    comment.authorName
+                  )}
+                </td>
+                <td className="text-wrap text-break">
+                  {editCommentId === comment.id ? (
+                    <input
+                      type="email"
+                      className="form-control"
+                      name="email"
+                      value={editableComment.email}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    comment.email
+                  )}
+                </td>
+                <td className="text-wrap text-break">
+                  {editCommentId === comment.id ? (
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="content"
+                      value={editableComment.content}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    comment.content
+                  )}
+                </td>
+                <td className="text-wrap text-break">
+                  {editCommentId === comment.id ? (
+                    <select
+                      className="form-control"
+                      name="status"
+                      value={editableComment.status}
+                      onChange={handleChange}
+                    >
                       <option value="true">Approved</option>
                       <option value="false">Not Approved</option>
                     </select>
@@ -98,21 +139,21 @@ function CommentManagerComponent() {
                 </td>
                 <td>
                   {editCommentId === comment.id ? (
-                    <Button 
+                    <Button
                       className="btn btn-success"
-                      onClick={() => handleSave(comment)}
+                      onClick={handleSave}
                     >
                       Save
                     </Button>
                   ) : (
-                    <Button 
+                    <Button
                       className="btn btn-primary"
                       onClick={() => handleEdit(comment)}
                     >
                       Edit
                     </Button>
                   )}
-                  <Button 
+                  <Button
                     className="btn btn-danger ms-lg-2 mt-2 mt-lg-0"
                     onClick={() => handleDelete(comment.id)}
                   >
