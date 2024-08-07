@@ -7,6 +7,7 @@ const ManageAdminProfileComponent = ({ username }) => {
   const [profile, setProfile] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // To track message type
 
   useEffect(() => {
     if (authenticated) {
@@ -17,12 +18,14 @@ const ManageAdminProfileComponent = ({ username }) => {
           setLoading(false);
         } catch (err) {
           setMessage("Error fetching profile");
+          setMessageType("danger"); // Set message type to danger
           setLoading(false);
         }
       };
       fetchProfile();
     } else {
       setMessage("You need to be authenticated to view this page");
+      setMessageType("danger"); // Set message type to danger
       setLoading(false);
     }
   }, [username, authenticated]);
@@ -45,18 +48,25 @@ const ManageAdminProfileComponent = ({ username }) => {
       console.log("Updating profile with data: ", updatedProfile);
       await axios.put(`http://localhost:8080/adminprofile/${username}`, updatedProfile);
       setMessage("Profile updated successfully");
+      setMessageType("success"); // Set message type to success
     } catch (err) {
       console.error("Error updating profile: ", err.response);
       setMessage("Error updating profile");
+      setMessageType("danger"); // Set message type to danger
     }
   };
 
   if (loading) return <p>Loading...</p>;
-  if (message) return <p>{message}</p>;
+  //if (message) return <p>{message}</p>;
 
   return (
     <div>
-      <h2>Manage Admin Profile</h2>
+      <h5>Update your profile details below:</h5>
+      {message && (
+        <div className={`alert alert-${messageType}`} role="alert">
+          {message}
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="name" className="form-label">Name</label>

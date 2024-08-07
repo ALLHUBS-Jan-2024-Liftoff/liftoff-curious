@@ -269,6 +269,7 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
           ))}
         </tbody>
       </Table>
+      {/* Refer to this link for documentation on pagination https://react-bootstrap.netlify.app/docs/components/pagination/ */}
       <Pagination className="justify-content-center mt-4">
         <Pagination.First onClick={() => paginate(1)} disabled={currentPage === 1} />
         <Pagination.Prev onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
