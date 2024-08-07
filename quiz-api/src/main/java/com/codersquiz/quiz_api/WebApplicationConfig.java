@@ -17,4 +17,5 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(authenticationFilter());
     }
+
 }
