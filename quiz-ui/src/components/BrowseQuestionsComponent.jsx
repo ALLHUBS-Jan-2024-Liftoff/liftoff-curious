@@ -273,11 +273,13 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
       <Pagination className="justify-content-center mt-4">
         <Pagination.First onClick={() => paginate(1)} disabled={currentPage === 1} />
         <Pagination.Prev onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+        {/* <Pagination.Ellipsis />   */}
         {[...Array(totalPages)].map((_, index) => (
           <Pagination.Item key={index} active={index + 1 === currentPage} onClick={() => paginate(index + 1)}>
             {index + 1}
           </Pagination.Item>
         ))}
+        {/* <Pagination.Ellipsis /> */}
         <Pagination.Next onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} />
         <Pagination.Last onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} />
       </Pagination>

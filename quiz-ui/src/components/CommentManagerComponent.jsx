@@ -66,7 +66,7 @@ function CommentManagerComponent() {
 
   return (
     <div>
-      <h5>Review, Approve/Unapprove Comments below: </h5>
+      <h5>Review, Approve/Deny Comments below: </h5>
       {comments.length > 0 ? (
         <Table striped bordered hover responsive className="mt-3">
           <thead>
@@ -109,7 +109,7 @@ function CommentManagerComponent() {
                     comment.email
                   )}
                 </td>
-                <td className="text-wrap text-break">
+                <td className="text-wrap text-break" style={{ minWidth: "200px"}}>
                   {editCommentId === comment.id ? (
                     <input
                       type="text"
@@ -122,7 +122,7 @@ function CommentManagerComponent() {
                     comment.content
                   )}
                 </td>
-                <td className="text-wrap text-break">
+                <td className="text-wrap">
                   {editCommentId === comment.id ? (
                     <select
                       className="form-control"
@@ -131,13 +131,13 @@ function CommentManagerComponent() {
                       onChange={handleChange}
                     >
                       <option value="true">Approved</option>
-                      <option value="false">Not Approved</option>
+                      <option value="false">Denied</option>
                     </select>
                   ) : (
-                    comment.status ? "Approved" : "Not Approved"
+                    comment.status ? "Approved" : "Denied"
                   )}
                 </td>
-                <td>
+                <td className="actions-column">
                   {editCommentId === comment.id ? (
                     <Button
                       className="btn btn-success"
@@ -150,14 +150,14 @@ function CommentManagerComponent() {
                       className="btn btn-primary"
                       onClick={() => handleEdit(comment)}
                     >
-                      Edit
+                      <i className="fas fa-edit text-white text-center" style={{ minWidth: "20px"}}></i><span className="d-none d-lg-inline"> Edit</span>
                     </Button>
                   )}
                   <Button
                     className="btn btn-danger ms-lg-2 mt-2 mt-lg-0"
                     onClick={() => handleDelete(comment.id)}
                   >
-                    Delete
+                    <i className="fas fa-trash-alt text-white text-center" style={{ minWidth: "20px"}}></i><span class="d-none d-lg-inline"> Delete</span>
                   </Button>
                 </td>
               </tr>

@@ -56,7 +56,7 @@ const ManageAdminProfileComponent = ({ username }) => {
       setMessageType("success"); // Set message type to success
     } catch (err) {
       console.error("Error updating profile: ", err.response);
-      setMessage("Error updating profile");
+      setMessage("Error updating profile: "+err?.response?.status);
       setMessageType("danger"); // Set message type to danger
     }
   };

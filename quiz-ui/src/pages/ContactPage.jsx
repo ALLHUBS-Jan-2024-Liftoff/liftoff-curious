@@ -21,6 +21,20 @@ function ContactPage() {
     }
   };
 
+  const truncateEmail = (inputEmail, numChars = 3) => {
+    let resultEmail = "";
+    let firstPart = "";
+    let secondPart = "";
+    let textLength = inputEmail.length;
+    let indexOfSymbol = inputEmail.indexOf('@');
+    secondPart = inputEmail.slice(indexOfSymbol, textLength);
+    firstPart = inputEmail.slice(0, indexOfSymbol);
+    let maskedFirstPart = firstPart.slice(0,numChars);
+    maskedFirstPart = maskedFirstPart.concat("***");
+    resultEmail = maskedFirstPart.concat(secondPart);
+    return resultEmail;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newComment = { content, authorName: name, email };
@@ -125,7 +139,7 @@ function ContactPage() {
             {comments.length > 0 ? (
               comments.map((comment) => (
                 <div key={comment.id} className="mb-3 border rounded p-3">
-                  <h6>Message from {comment.authorName}</h6>
+                  <h6>Message from: {comment.authorName} ({truncateEmail(comment.email, 3)})</h6>
                   <p>{comment.content}</p>
                   {/* <small>{comment.email}</small> */}
                 </div>
