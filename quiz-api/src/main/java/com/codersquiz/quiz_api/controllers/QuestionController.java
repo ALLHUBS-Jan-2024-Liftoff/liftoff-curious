@@ -1,10 +1,12 @@
 package com.codersquiz.quiz_api.controllers;
 
 import com.codersquiz.quiz_api.exceptions.ResourceNotFoundException;
+import com.codersquiz.quiz_api.models.ApiCallCount;
 import com.codersquiz.quiz_api.models.Question;
 import com.codersquiz.quiz_api.models.Topic;
 import com.codersquiz.quiz_api.models.dto.BulkUploadDTO;
 import com.codersquiz.quiz_api.models.dto.QuestionUploadDTO;
+import com.codersquiz.quiz_api.repositories.ApiCallCountRepository;
 import com.codersquiz.quiz_api.repositories.QuestionRepository;
 import com.codersquiz.quiz_api.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class QuestionController {
 
     @Autowired
     private TopicRepository topicRepository;
+
+    @Autowired
+    private ApiCallCountRepository apiCallCountRepository;
 
     @GetMapping("/all")
     public List<Question> getAllQuestions() {
@@ -136,7 +141,20 @@ public class QuestionController {
         }
         Collections.shuffle(questions);
         List<Question> selectedQuestions = questions.stream().limit(numq).collect(Collectors.toList());
+
         // Add code to count the requests
+        String endpoint = "/quiz-api/get";
+        ApiCallCount apiCallCount = apiCallCountRepository.findById(endpoint).orElse(new ApiCallCount());
+        apiCallCount.setApiEndpoint(endpoint);
+        apiCallCount.setCount(apiCallCount.getCount() + 1);
+        apiCallCountRepository.save(apiCallCount);
+
         return new ResponseEntity<>(selectedQuestions, HttpStatus.OK);
+    }
+
+    @GetMapping("/requestcount")
+    public Long getRequestCount() {
+        String endpoint = "/quiz-api/get";
+        return apiCallCountRepository.findById(endpoint).map(ApiCallCount::getCount).orElse(0L);
     }
 }

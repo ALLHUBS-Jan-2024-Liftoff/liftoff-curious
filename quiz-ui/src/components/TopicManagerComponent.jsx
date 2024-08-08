@@ -128,7 +128,7 @@ function TopicManagerComponent() {
                   placeholder="Topic name"
                 />
               </div>
-              <div className="col-md-2">
+              <div className="col-md-2 pt-3 pt-md-0">
                 <button className="btn btn-primary" onClick={handleUpdateTopic}>Edit Topic</button>
               </div>
               <div className="col-auto"></div>
@@ -149,7 +149,7 @@ function TopicManagerComponent() {
               placeholder="Topic name"
             />
           </div>
-          <div className="col-md-2">
+          <div className="col-md-2 pt-3 pt-md-0">
             <button className="btn btn-primary" onClick={handleAddTopic}>Add Topic</button>
           </div>
           <div className="col-auto"></div>

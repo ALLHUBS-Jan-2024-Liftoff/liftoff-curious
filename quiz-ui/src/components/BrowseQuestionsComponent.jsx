@@ -190,6 +190,36 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
 
   const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
 
+  const getPaginationItems = () => {
+    let items = [];
+    let startPage = Math.max(1, currentPage - 1);
+    let endPage = Math.min(totalPages, currentPage + 1);
+
+    if (startPage > 1) {
+      items.push(<Pagination.Item key={1} onClick={() => paginate(1)}>{1}</Pagination.Item>);
+      if (startPage > 2) {
+        items.push(<Pagination.Ellipsis key="start-ellipsis" />);
+      }
+    }
+
+    for (let number = startPage; number <= endPage; number++) {
+      items.push(
+        <Pagination.Item key={number} active={number === currentPage} onClick={() => paginate(number)}>
+          {number}
+        </Pagination.Item>
+      );
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        items.push(<Pagination.Ellipsis key="end-ellipsis" />);
+      }
+      items.push(<Pagination.Item key={totalPages} onClick={() => paginate(totalPages)}>{totalPages}</Pagination.Item>);
+    }
+
+    return items;
+  };
+
   return (
     <div className="container p-0 mt-4">
       <div className="d-flex align-items-end justify-content-between">
@@ -255,13 +285,13 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
               </td>
               <td>{question.topic ? question.topic.name : 'No Topic'}</td>
               <td className="actions-column">
-                <Button variant="info" onClick={() => handleViewShow(question)} className="me-lg-2 mb-1">
+                <Button variant="info" onClick={() => handleViewShow(question)} className="me-lg-2 mb-1" title="View">
                   <i className="fas fa-eye text-white"></i>
                 </Button>
-                <Button variant="warning" onClick={() => handleShow(question)} className="me-lg-2 mb-1">
+                <Button variant="warning" onClick={() => handleShow(question)} className="me-lg-2 mb-1" title="Edit">
                   <i className="fas fa-edit text-white"></i>
                 </Button>
-                <Button variant="danger" onClick={() => handleDelete(question.id)} className="me-lg-2 mb-1">
+                <Button variant="danger" onClick={() => handleDelete(question.id)} className="me-lg-2 mb-1" title="Delete">
                   <i className="fas fa-trash-alt text-white"></i>
                 </Button>
               </td>
@@ -269,17 +299,10 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
           ))}
         </tbody>
       </Table>
-      {/* Refer to this link for documentation on pagination https://react-bootstrap.netlify.app/docs/components/pagination/ */}
       <Pagination className="justify-content-center mt-4">
         <Pagination.First onClick={() => paginate(1)} disabled={currentPage === 1} />
         <Pagination.Prev onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
-        {/* <Pagination.Ellipsis />   */}
-        {[...Array(totalPages)].map((_, index) => (
-          <Pagination.Item key={index} active={index + 1 === currentPage} onClick={() => paginate(index + 1)}>
-            {index + 1}
-          </Pagination.Item>
-        ))}
-        {/* <Pagination.Ellipsis /> */}
+        {getPaginationItems()}
         <Pagination.Next onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} />
         <Pagination.Last onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} />
       </Pagination>

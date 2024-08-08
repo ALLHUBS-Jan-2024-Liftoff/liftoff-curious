@@ -6,6 +6,7 @@ function ContactPage() {
   const [email, setEmail] = useState("");
   const [content, setContent] = useState("");
   const [comments, setComments] = useState([]);
+  const [submissionStatus, setSubmissionStatus] = useState(null); // New state for submission status
 
   useEffect(() => {
     fetchApprovedComments();
@@ -51,11 +52,14 @@ function ContactPage() {
         setName("");
         setEmail("");
         setContent("");
+        setSubmissionStatus("success"); // Set submission status to success
         fetchApprovedComments();
       } else {
+        setSubmissionStatus("failure"); // Set submission status to failure
         console.error("Failed to submit comment");
       }
     } catch (error) {
+      setSubmissionStatus("failure"); // Set submission status to failure
       console.error("Error submitting comment:", error);
     }
   };
@@ -84,6 +88,16 @@ function ContactPage() {
         <div className="row">
           <div className="col col-12 col-lg-6 rounded pe-lg-5">
             <h4 className="mb-3">Have Some Feedback/Comments?</h4>
+            {submissionStatus === "success" && (
+              <div className="alert alert-success" role="alert">
+                Your comment has been submitted successfully!<br/>We will review it soon, and may decide to publish it too. 
+              </div>
+            )}
+            {submissionStatus === "failure" && (
+              <div className="alert alert-danger" role="alert">
+                Failed to submit your comment. Please try again later.
+              </div>
+            )}
             <form onSubmit={handleSubmit}>
               <div className="mb-3 row">
                 <label htmlFor="name" className="col-sm-4 col-form-label">Your Name</label>
