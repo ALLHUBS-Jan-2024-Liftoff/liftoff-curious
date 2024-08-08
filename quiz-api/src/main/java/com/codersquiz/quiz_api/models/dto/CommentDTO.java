@@ -1,5 +1,6 @@
 package com.codersquiz.quiz_api.models.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +11,8 @@ public class CommentDTO {
     private Long id;
 
     @NotBlank(message = "Comment cannot be blank")
-    @Size(max = 500, message = "Comment cannot exceed 500 characters")
+    @Column(columnDefinition = "TEXT")
+    @Size(max = 1000, message = "Comment cannot exceed 1000 characters")
     private String content;
 
     @NotBlank(message = "Author name cannot be blank")
