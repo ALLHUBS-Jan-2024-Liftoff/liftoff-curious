@@ -157,7 +157,7 @@ function CommentManagerComponent() {
                     className="btn btn-danger ms-lg-2 mt-2 mt-lg-0"
                     onClick={() => handleDelete(comment.id)}
                   >
-                    <i className="fas fa-trash-alt text-white text-center" style={{ minWidth: "20px"}}></i><span class="d-none d-lg-inline"> Delete</span>
+                    <i className="fas fa-trash-alt text-white text-center" style={{ minWidth: "20px"}}></i><span className="d-none d-lg-inline"> Delete</span>
                   </Button>
                 </td>
               </tr>
