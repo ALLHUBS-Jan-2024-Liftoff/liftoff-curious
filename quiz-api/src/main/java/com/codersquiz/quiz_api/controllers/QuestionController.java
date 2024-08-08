@@ -136,6 +136,7 @@ public class QuestionController {
         }
         Collections.shuffle(questions);
         List<Question> selectedQuestions = questions.stream().limit(numq).collect(Collectors.toList());
+        // Add code to count the requests
         return new ResponseEntity<>(selectedQuestions, HttpStatus.OK);
     }
 }

@@ -21,6 +21,20 @@ function ContactPage() {
     }
   };
 
+  const truncateEmail = (inputEmail, numChars = 3) => {
+    let resultEmail = "";
+    let firstPart = "";
+    let secondPart = "";
+    let textLength = inputEmail.length;
+    let indexOfSymbol = inputEmail.indexOf('@');
+    secondPart = inputEmail.slice(indexOfSymbol, textLength);
+    firstPart = inputEmail.slice(0, indexOfSymbol);
+    let maskedFirstPart = firstPart.slice(0,numChars);
+    maskedFirstPart = maskedFirstPart.concat("***");
+    resultEmail = maskedFirstPart.concat(secondPart);
+    return resultEmail;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newComment = { content, authorName: name, email };
@@ -52,12 +66,11 @@ function ContactPage() {
         backgroundImage={"https://placehold.co/1600x400/008F67/008F67/png"}
         pageName={"Contact"}
       />
-      <div style={{ minHeight: "600px", backgroundColor: "antiquewhite" }}>
+      <div style={{ minHeight: "600px" }} className="p-3 p-lg-5 bg-light">
         <div className="row">
           <div className="col rounded pb-3">
-            <h4>Contact Us</h4>
+            <h4>We'd Love to Hear From You!</h4>
             <p>
-              We'd Love to Hear From You!<br/>
               Whether you have a question, feedback, or simply want to share your thoughts, our team is here to listen. Your input is invaluable in helping us improve and provide the best possible service.
             </p>
             <p>
@@ -69,8 +82,8 @@ function ContactPage() {
           </div>
         </div>
         <div className="row">
-          <div className="col col-12 col-lg-6 rounded order-last order-lg-first">
-            <h4>Have some feedback/Comments?</h4>
+          <div className="col col-12 col-lg-6 rounded pe-lg-5">
+            <h4 className="mb-3">Have Some Feedback/Comments?</h4>
             <form onSubmit={handleSubmit}>
               <div className="mb-3 row">
                 <label htmlFor="name" className="col-sm-4 col-form-label">Your Name</label>
@@ -122,17 +135,17 @@ function ContactPage() {
             </form>
           </div>
           <div className="col col-12 col-lg-6 rounded">
-            <h4>Approved Comments</h4>
+            <h4 className="mb-3">What Others Said</h4>
             {comments.length > 0 ? (
               comments.map((comment) => (
-                <div key={comment.id} className="mb-3">
-                  <h5>{comment.authorName}</h5>
+                <div key={comment.id} className="mb-3 border rounded p-3">
+                  <h6>Message from: {comment.authorName} ({truncateEmail(comment.email, 3)})</h6>
                   <p>{comment.content}</p>
                   {/* <small>{comment.email}</small> */}
                 </div>
               ))
             ) : (
-              <p>No approved comments yet.</p>
+              <p>Check this space out for published comments.</p>
             )}
           </div>
         </div>

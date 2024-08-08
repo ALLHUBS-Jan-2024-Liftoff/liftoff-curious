@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { Button, Table } from 'react-bootstrap';
+import axios from 'axios';
 
 function CommentManagerComponent() {
   const [comments, setComments] = useState([]);
   const [editCommentId, setEditCommentId] = useState(null);
-  const [updatedStatus, setUpdatedStatus] = useState(false);
+  const [editableComment, setEditableComment] = useState(null);
 
   useEffect(() => {
     fetchComments();
@@ -11,9 +13,8 @@ function CommentManagerComponent() {
 
   const fetchComments = async () => {
     try {
-      const response = await fetch("http://localhost:8080/comments/all");
-      const data = await response.json();
-      setComments(data);
+      const response = await axios.get("http://localhost:8080/comments/all");
+      setComments(response.data);
     } catch (error) {
       console.error("Error fetching comments:", error);
     }
@@ -21,14 +22,10 @@ function CommentManagerComponent() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/comments/${id}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        setComments(comments.filter(comment => comment.id !== id));
-      } else {
-        console.error("Failed to delete comment");
-      }
+      await axios.delete(`http://localhost:8080/comments/${id}`);
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment.id !== id)
+      );
     } catch (error) {
       console.error("Error deleting comment:", error);
     }
@@ -36,43 +33,42 @@ function CommentManagerComponent() {
 
   const handleEdit = (comment) => {
     setEditCommentId(comment.id);
-    setUpdatedStatus(comment.status);
+    setEditableComment({ ...comment });
   };
 
-  const handleStatusChange = (event) => {
-    setUpdatedStatus(event.target.value === "true");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditableComment((prevComment) => ({
+      ...prevComment,
+      [name]: name === "status" ? value === "true" : value,
+    }));
   };
 
-  const handleSave = async (comment) => {
-    const updatedComment = {
-      ...comment,
-      status: updatedStatus,
-    };
-
+  const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/comments/${comment.id}`, {
-        method: "PUT",
+      const response = await axios.put(`http://localhost:8080/comments/${editableComment.id}`, editableComment, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedComment),
       });
-      if (response.ok) {
-        setComments(comments.map(c => c.id === comment.id ? updatedComment : c));
+
+      if (response.status === 200) {
+        setComments(comments.map(c => c.id === editableComment.id ? editableComment : c));
         setEditCommentId(null);
+        setEditableComment(null);
       } else {
-        console.error("Failed to update approval status");
+        console.error("Failed to update comment");
       }
     } catch (error) {
-      console.error("Error updating approval status:", error);
+      console.error("Error updating comment:", error);
     }
   };
 
   return (
     <div>
-      <h4>Manage Comments</h4>
+      <h5>Review, Approve/Deny Comments below: </h5>
       {comments.length > 0 ? (
-        <table className="table">
+        <Table striped bordered hover responsive className="mt-3">
           <thead>
             <tr>
               <th>ID</th>
@@ -87,46 +83,87 @@ function CommentManagerComponent() {
             {comments.map((comment) => (
               <tr key={comment.id}>
                 <td>{comment.id}</td>
-                <td>{comment.authorName}</td>
-                <td>{comment.email}</td>
-                <td>{comment.content}</td>
-                <td>
+                <td className="text-wrap text-break">
                   {editCommentId === comment.id ? (
-                    <select value={updatedStatus} onChange={handleStatusChange}>
-                      <option value="true">Approved</option>
-                      <option value="false">Not Approved</option>
-                    </select>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="authorName"
+                      value={editableComment.authorName}
+                      onChange={handleChange}
+                    />
                   ) : (
-                    comment.status ? "Approved" : "Not Approved"
+                    comment.authorName
                   )}
                 </td>
-                <td>
+                <td className="text-wrap text-break">
                   {editCommentId === comment.id ? (
-                    <button 
+                    <input
+                      type="email"
+                      className="form-control"
+                      name="email"
+                      value={editableComment.email}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    comment.email
+                  )}
+                </td>
+                <td className="text-wrap text-break" style={{ minWidth: "200px"}}>
+                  {editCommentId === comment.id ? (
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="content"
+                      value={editableComment.content}
+                      onChange={handleChange}
+                    />
+                  ) : (
+                    comment.content
+                  )}
+                </td>
+                <td className="text-wrap">
+                  {editCommentId === comment.id ? (
+                    <select
+                      className="form-control"
+                      name="status"
+                      value={editableComment.status}
+                      onChange={handleChange}
+                    >
+                      <option value="true">Approved</option>
+                      <option value="false">Denied</option>
+                    </select>
+                  ) : (
+                    comment.status ? "Approved" : "Denied"
+                  )}
+                </td>
+                <td className="actions-column">
+                  {editCommentId === comment.id ? (
+                    <Button
                       className="btn btn-success"
-                      onClick={() => handleSave(comment)}
+                      onClick={handleSave}
                     >
                       Save
-                    </button>
+                    </Button>
                   ) : (
-                    <button 
+                    <Button
                       className="btn btn-primary"
                       onClick={() => handleEdit(comment)}
                     >
-                      Edit
-                    </button>
+                      <i className="fas fa-edit text-white text-center" style={{ minWidth: "20px"}}></i><span className="d-none d-lg-inline"> Edit</span>
+                    </Button>
                   )}
-                  <button 
-                    className="btn btn-danger"
+                  <Button
+                    className="btn btn-danger ms-lg-2 mt-2 mt-lg-0"
                     onClick={() => handleDelete(comment.id)}
                   >
-                    Delete
-                  </button>
+                    <i className="fas fa-trash-alt text-white text-center" style={{ minWidth: "20px"}}></i><span class="d-none d-lg-inline"> Delete</span>
+                  </Button>
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       ) : (
         <p>No comments to manage.</p>
       )}

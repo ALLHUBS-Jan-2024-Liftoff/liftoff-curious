@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Button, Modal, Table, Form, Row, Col, Dropdown, Alert } from 'react-bootstrap';
+import { Button, Modal, Table, Form, Row, Col, Dropdown, Alert, Pagination } from 'react-bootstrap';
 import { getAllQuestions, updateQuestion, deleteQuestion, bulkDeleteQuestions } from '../services/questionService';
 import { getAllTopics } from '../services/topicService';
 import AuthContext from '../context/AuthContext';
@@ -17,8 +17,10 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null);
   const [isBulkDeleteDisabled, setIsBulkDeleteDisabled] = useState(true);
-  const [selectAll, setSelectAll] = useState(false); // State to keep track of whether all checkboxes are selected
+  const [selectAll, setSelectAll] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     const handleResize = () => {
@@ -27,7 +29,6 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
 
     window.addEventListener('resize', handleResize);
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -141,27 +142,28 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
     } else {
       setFilteredQuestions(questions.filter(question => question.topic && question.topic.id === parseInt(topicId)));
     }
+    setCurrentPage(1); // Reset to first page on filter change
   };
 
   const handleSelectQuestion = (questionId) => {
     setSelectedQuestions((prevSelected) => {
       let newSelected;
-      if (questionId === 'all') { // Change here
-        if (selectAll) { // Change here
-          newSelected = []; // Change here
-          setSelectAll(false); // Change here
+      if (questionId === 'all') {
+        if (selectAll) {
+          newSelected = [];
+          setSelectAll(false);
         } else {
-          newSelected = questions.map(question => question.id); // Change here
-          setSelectAll(true); // Change here
+          newSelected = questions.map(question => question.id);
+          setSelectAll(true);
         }
       } else {
         newSelected = prevSelected.includes(questionId)
           ? prevSelected.filter(id => id !== questionId)
           : [...prevSelected, questionId];
         if (newSelected.length === questions.length) {
-          setSelectAll(true); // Change here
+          setSelectAll(true);
         } else {
-          setSelectAll(false); // Change here
+          setSelectAll(false);
         }
       }
       setIsBulkDeleteDisabled(newSelected.length === 0);
@@ -179,6 +181,14 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   if (!authenticated) {
     return <p>Please log in to view the questions.</p>;
   }
+
+  const indexOfLastQuestion = currentPage * itemsPerPage;
+  const indexOfFirstQuestion = indexOfLastQuestion - itemsPerPage;
+  const currentQuestions = filteredQuestions.slice(indexOfFirstQuestion, indexOfLastQuestion);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
 
   return (
     <div className="container p-0 mt-4">
@@ -215,10 +225,10 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
         <thead>
           <tr>
             <th>
-              <Form.Check // Change here
-                type="checkbox" // Change here
-                checked={selectAll} // Change here
-                onChange={() => handleSelectQuestion('all')} // Change here
+              <Form.Check
+                type="checkbox"
+                checked={selectAll}
+                onChange={() => handleSelectQuestion('all')}
               />
             </th>
             <th>#</th>
@@ -229,7 +239,7 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredQuestions.map((question, index) => (
+          {currentQuestions.map((question, index) => (
             <tr key={question.id}>
               <td>
                 <Form.Check
@@ -238,10 +248,10 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
                   onChange={() => handleSelectQuestion(question.id)}
                 />
               </td>
-              <td>{index + 1}</td>
+              <td>{indexOfFirstQuestion + index + 1}</td>
               <td>{question.id}</td>
               <td>
-                  {truncateString(`Q: ${question.content} Ans: ${question.answer} Choices: A) ${question.optionA}, B) ${question.optionB}, C) ${question.optionC}, D) ${question.optionD}`, screenWidth >= 800 ? 200 : 50)}
+                {truncateString(`Q: ${question.content} Ans: ${question.answer} Choices: A) ${question.optionA}, B) ${question.optionB}, C) ${question.optionC}, D) ${question.optionD}`, screenWidth >= 800 ? 200 : 50)}
               </td>
               <td>{question.topic ? question.topic.name : 'No Topic'}</td>
               <td className="actions-column">
@@ -259,7 +269,20 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
           ))}
         </tbody>
       </Table>
-
+      {/* Refer to this link for documentation on pagination https://react-bootstrap.netlify.app/docs/components/pagination/ */}
+      <Pagination className="justify-content-center mt-4">
+        <Pagination.First onClick={() => paginate(1)} disabled={currentPage === 1} />
+        <Pagination.Prev onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+        {/* <Pagination.Ellipsis />   */}
+        {[...Array(totalPages)].map((_, index) => (
+          <Pagination.Item key={index} active={index + 1 === currentPage} onClick={() => paginate(index + 1)}>
+            {index + 1}
+          </Pagination.Item>
+        ))}
+        {/* <Pagination.Ellipsis /> */}
+        <Pagination.Next onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} />
+        <Pagination.Last onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} />
+      </Pagination>
       {currentQuestion && (
         <>
           <Modal show={viewShow} onHide={handleClose}>

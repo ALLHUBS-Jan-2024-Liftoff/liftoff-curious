@@ -72,7 +72,7 @@ const TriviaPage = () => {
     return (
         <>
             <JumbotronComponent backgroundImage={'https://placehold.co/1600x400/6F7F6F/6F7F6F/png'} pageName={'Trivia'} />
-            <div className="bg-light p-3 p-lg-4 py-4" style={{ minHeight: '600px' }}>
+            <div className="bg-light p-3 p-lg-5 py-4 p-3" style={{ minHeight: '600px' }}>
                 <div className="row mb-4">
                     <div className="col-12 col-lg-9">
                         <h4>Play Quick Trivia</h4>

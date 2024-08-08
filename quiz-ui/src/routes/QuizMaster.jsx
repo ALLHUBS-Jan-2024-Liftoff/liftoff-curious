@@ -24,7 +24,7 @@ function QuizMaster() {
   }, [authenticated, navigate]);
 
   const handleSelect = (eventKey) => {
-    if (eventKey === '0') {
+    if (eventKey === '1') {
       setRefreshTrigger((prev) => !prev);
     }
   };
@@ -55,7 +55,7 @@ function QuizMaster() {
             </div>
           </div>
         </div>
-        <Accordion defaultActiveKey="0" onSelect={handleSelect}>
+        <Accordion defaultActiveKey="1" onSelect={handleSelect}>
         <Accordion.Item eventKey="0">
             <Accordion.Header>
               <h4>Manage My Admin Profile</h4>
