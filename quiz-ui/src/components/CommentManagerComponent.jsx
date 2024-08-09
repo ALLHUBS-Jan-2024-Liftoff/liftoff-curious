@@ -21,13 +21,15 @@ function CommentManagerComponent() {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:8080/comments/${id}`);
-      setComments((prevComments) =>
-        prevComments.filter((comment) => comment.id !== id)
-      );
-    } catch (error) {
-      console.error("Error deleting comment:", error);
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      try {
+        await axios.delete(`http://localhost:8080/comments/${id}`);
+        setComments((prevComments) =>
+          prevComments.filter((comment) => comment.id !== id)
+        );
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+      }
     }
   };
 
@@ -150,14 +152,14 @@ function CommentManagerComponent() {
                       className="btn btn-primary"
                       onClick={() => handleEdit(comment)}
                     >
-                      <i className="fas fa-edit text-white text-center" style={{ minWidth: "20px"}}></i><span className="d-none d-lg-inline"> Edit</span>
+                      <i className="fas fa-edit text-white text-center" style={{ minWidth: "20px"}} title="Edit Comment"></i><span className="d-none d-lg-inline"> Edit</span>
                     </Button>
                   )}
                   <Button
                     className="btn btn-danger ms-lg-2 mt-2 mt-lg-0"
                     onClick={() => handleDelete(comment.id)}
                   >
-                    <i className="fas fa-trash-alt text-white text-center" style={{ minWidth: "20px"}}></i><span className="d-none d-lg-inline"> Delete</span>
+                    <i className="fas fa-trash-alt text-white text-center" style={{ minWidth: "20px"}} title="Delete Comment"></i><span className="d-none d-lg-inline"> Delete</span>
                   </Button>
                 </td>
               </tr>
