@@ -71,11 +71,11 @@ const TriviaPage = () => {
 
     return (
         <>
-            <JumbotronComponent backgroundImage={'https://placehold.co/1600x400/6F7F6F/6F7F6F/png'} pageName={'Trivia'} />
-            <div className="bg-light p-3 p-lg-5 py-4 p-3" style={{ minHeight: '600px' }}>
+            <JumbotronComponent backgroundImage={'./assets/banner-images/Trivia_Banner.jpg'} pageName={'Trivia'} />
+            <div className={questions.length <= 0 ? 'bg-light pt-3 px-3 pt-lg-5 px-lg-5' : 'bg-light p-3 p-lg-5 py-4 p-3'} style={{ minHeight: '400px' }}>
                 <div className="row mb-4">
                     <div className="col-12 col-lg-9">
-                        <h4>Play Quick Trivia</h4>
+                        <h4 className='mb-3'>Play Quick Trivia</h4>
                         <p>
                             Take a break from coding quizzes with a quick trivia on random non-technical topics for some fun and relaxation. 
                             The trivia questions are sourced from <a href="https://opentdb.com/" target="_blank" rel="noopener noreferrer">OpenTrivia Database</a> (A free to use, user-contributed trivia question database).
@@ -83,7 +83,7 @@ const TriviaPage = () => {
                     </div>
                     <div className="col-12 col-lg-3">
                         <p className="text-center">{selectedTopic ? "Selected Topic for Trivia" : "Select a Topic for Trivia"}</p>
-                        <div className="text-center">
+                        <div className="text-center mt-4">
                             <select className="form-select" value={selectedTopic} onChange={handleTopicChange}>
                             <option value="" disabled>Select a topic</option>
                                 {topics.map(topic => (
@@ -93,11 +93,16 @@ const TriviaPage = () => {
                         </div>
                     </div>
                 </div>
+                {questions.length <= 0 && (
+                    <div className="pt-3 pt-lg-5">
+                        <img src="./assets/images/Trivia-Illustration.png" alt="questions will be coming" className="img-fluid" />
+                    </div>
+                )}
                 {questions.length > 0 && !showResults && (
                     <div className="row">
                         <div className="col-12 col-lg-9">
                             {questions.map((question, index) => (
-                                <div key={index} className="mb-3 p-3 border rounded">
+                                <div key={index} className="mb-4 p-3 border rounded" style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
                                     <p>{he.decode(question.question)}</p>
                                     <div>
                                         {[...question.incorrect_answers, question.correct_answer]
@@ -133,7 +138,7 @@ const TriviaPage = () => {
                         <div className="col-12 col-lg-9">
                             <h5 className='mb-3'>Your Score: {score}/{questions.length}</h5>
                             {questions.map((question, index) => (
-                                <div key={index} className="mb-3 p-3 border rounded">
+                                <div key={index} className="mb-4 p-3 border rounded" style={{ boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px" }}>
                                     <p>{he.decode(question.question)}</p>
                                     <p>
                                         Your answer: <span className="fw-normal">{he.decode(answers[index] || "No answer")}</span>

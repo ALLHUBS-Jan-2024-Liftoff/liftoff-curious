@@ -114,6 +114,10 @@ public class AuthenticationController {
         }
 
         setUserInSession(request.getSession(), theUser);
+
+        // logging for testing purpose only
+        System.out.println("The user's Session ID is: " + request.getSession().getId());
+
         response.put("message", "User logged in successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

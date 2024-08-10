@@ -37,7 +37,7 @@ function QuizMaster() {
 
   return (
     <>
-      <JumbotronComponent backgroundImage={'https://placehold.co/1600x400/3186F7/3186F7/png'} pageName={"Quiz Master"} />
+      <JumbotronComponent backgroundImage={'./assets/banner-images/Admin_Banner.jpg'} pageName={"Quiz Master"} />
       <div className="p-1 p-lg-4" style={{ minHeight: '600px', backgroundColor: 'white' }}>
         <div className="bg-light rounded pt-3 pb-1 mb-4">
           <div className="row">

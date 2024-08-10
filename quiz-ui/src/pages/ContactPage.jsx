@@ -67,27 +67,31 @@ function ContactPage() {
   return (
     <>
       <JumbotronComponent
-        backgroundImage={"https://placehold.co/1600x400/008F67/008F67/png"}
+        backgroundImage={"./assets/banner-images/Contact_Banner.jpg"}
         pageName={"Contact"}
       />
       <div style={{ minHeight: "600px" }} className="p-3 p-lg-5 bg-light">
         <div className="row">
-          <div className="col rounded pb-3">
-            <h4>We'd Love to Hear From You!</h4>
+          <div className="col rounded pb-4">
+            <h4 className="mb-4">We'd Love to Hear From You!</h4>
             <p>
-              Whether you have a question, feedback, or simply want to share your thoughts, our team is here to listen. Your input is invaluable in helping us improve and provide the best possible service.
+                Whether you have a question, feedback, or simply want to share your thoughts, our team is here to listen. Your input is invaluable in helping us improve and provide the best possible service. Don't hesitate to connect with us for any of the following reasons:
             </p>
+            <ul>
+                <li><strong>General Inquiries:</strong> For any general questions or comments, feel free to drop us a message. We'll get back to you as soon as possible.</li>
+                <li><strong>Technical Support:</strong> Experiencing any issues with our service? Our support team is ready to assist you with any technical difficulties or concerns you might have.</li>
+                <li><strong>Feedback and Suggestions:</strong> Have ideas on how we can improve? We appreciate your suggestions and are always looking for ways to enhance our offerings.</li>
+                <li><strong>Partnership Opportunities:</strong> Interested in collaborating with us? Let's explore how we can work together to achieve great things.</li>
+            </ul>
             <p>
-              <strong>General Inquiries:</strong> For any general questions or comments, feel free to drop us a message. We'll get back to you as soon as possible.<br/>
-              <strong>Technical Support:</strong> Experiencing any issues with our service? Our support team is ready to assist you with any technical difficulties or concerns you might have.<br/>
-              <strong>Feedback and Suggestions:</strong> Have ideas on how we can improve? We appreciate your suggestions and are always looking for ways to enhance our offerings.<br/>
-              <strong>Partnership Opportunities:</strong> Interested in collaborating with us? Let's explore how we can work together to achieve great things.
+                Please fill out the contact form below. Curated comments or words of appreciation will be published after review. We will also address any concerns you may have. Alternatively, you can send an email to us at <a href="mailto:quizcoders@gmail.com?subject=Coders%20Quiz%20Web%20Application" title="Send an email to us">quizcoders@gmail.com</a> for a faster response.
             </p>
           </div>
         </div>
         <div className="row">
-          <div className="col col-12 col-lg-6 rounded pe-lg-5">
-            <h4 className="mb-3">Have Some Feedback/Comments?</h4>
+          <div className="col col-12 col-lg-6 pe-lg-5 d-flex flex-column justify-content-between">
+            <div>
+            <h4 className="mb-4">Have Some Feedback/Comments?</h4>
             {submissionStatus === "success" && (
               <div className="alert alert-success" role="alert">
                 Your comment has been submitted successfully!<br/>We will review it soon, and may decide to publish it too. 
@@ -147,19 +151,27 @@ function ContactPage() {
                 </div>
               </div>
             </form>
+            </div>
+            {comments.length >= 5 ? (
+            <div className="d-none d-lg-block">
+              <img src="./assets/images/Contact-Page-Filler.png" alt="Words of Appreciation" title="Thank you all for the comments and feedback" className="img-fluid" style={{ maxWidth: '300px'}}/>
+            </div>) : (<div style={{ lineHeight: '0px', fontSize: '0px'}}>&nbsp;</div>)}
           </div>
-          <div className="col col-12 col-lg-6 rounded">
-            <h4 className="mb-3">What Others Said</h4>
+          <div className="col col-12 col-lg-6 rounded pb-4">
+            <h4 className="mb-4">What Others Said</h4>
             {comments.length > 0 ? (
               comments.map((comment) => (
-                <div key={comment.id} className="mb-3 border rounded p-3">
+                <div key={comment.id} className="mb-3 border rounded p-3" style={{ boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px"}}>
                   <h6>Message from: {comment.authorName} ({truncateEmail(comment.email, 3)})</h6>
                   <p>{comment.content}</p>
                   {/* <small>{comment.email}</small> */}
                 </div>
               ))
             ) : (
+              <div className="text-center border rounded">
+              <img src='./assets/images/messages-list-filler.png' alt="New messages will come"/>
               <p>Check this space out for published comments.</p>
+              </div>
             )}
           </div>
         </div>

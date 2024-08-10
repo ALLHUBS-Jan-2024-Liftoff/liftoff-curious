@@ -12,14 +12,26 @@ function HeaderComponent() {
   const handleNavLinkClick = () => setExpanded(false);
 
   return (
-    <header>
-      <Navbar expand="lg" className="bg-body-tertiary" data-bs-theme="dark" expanded={expanded} onToggle={setExpanded}>
+    <header className="sticky-top" style={{ boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>
+      {/* <Navbar expand="lg" className="bg-body-tertiary" data-bs-theme="dark" expanded={expanded} onToggle={setExpanded}> */}
+      <Navbar
+        expand="lg"
+        className="sticky-top"
+        data-bs-theme="dark"
+        expanded={expanded}
+        onToggle={setExpanded}
+        style={{
+          background: 'linear-gradient(135deg, #343a40, #212529)',
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          backdropFilter: 'blur(10px)',
+        }}
+      >  
         <Container>
           {isQuizInProgress ? (
             <Navbar.Brand>
               <img
                 className="navbar-logo"
-                src="./assets/images/Coders-Quiz-Logo_200x200_PNG.png"
+                src="./assets/images/CQ-logo-white-web.png"
                 alt="Coders' Quiz"
               />
             </Navbar.Brand>
@@ -27,7 +39,7 @@ function HeaderComponent() {
             <Navbar.Brand href="/">
               <img
                 className="navbar-logo"
-                src="./assets/images/Coders-Quiz-Logo_200x200_PNG.png"
+                src="./assets/images/CQ-logo-white-web.png"
                 alt="Coders' Quiz"
               />
             </Navbar.Brand>
