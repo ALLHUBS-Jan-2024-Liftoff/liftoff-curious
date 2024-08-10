@@ -43,10 +43,17 @@ function HomePage() {
 
   return (
     <div className="home">
-      <HomeCarousel />
+      <HomeCarousel/>
+      <div className='jumbotron d-block d-lg-none d-flex align-items-center' style={{ height: '300px', backgroundImage: 'url("./assets/banner-images/Mobile_Banner_lowQ.jpg")', backgroundPositionX: '100%'}}>
+      <div className='p-3 pe-5 text-white' style={{ background: 'linear-gradient(to right, rgba(0, 100, 0, 0.9) 0%, rgba(0, 100, 0, 0.5) 70%, transparent 100%)' }}>
+          <h1 className="fw-bold">Fun Quizzes</h1>
+          <h2>Anywhere, Anytime!</h2>
+      </div>
+
+      </div>
       <div className="bg-light">
-        <div className="row">
-          <div className="col-12 col-lg-6">
+        <div className="row" >
+          <div className="col-12 col-lg-6 pt-2">
             <div className="p-3 ps-lg-5">
               <div className="py-3">
                 <h2>Play Fun and Interactive Quizzes</h2>
@@ -60,13 +67,13 @@ function HomePage() {
               </p>
             </div>
           </div>
-          <div className="col-12 col-lg-6">
+          <div className="col-12 col-lg-6 pt-2">
             <div className="p-3 p-lg-5">
-              <div className="p-3 p-lg-4 border bg-white rounded">
-                <p>It’s as easy as 1-2-3! Simply select your desired topic, choose the number of questions you want to tackle, and dive into the quiz. No lengthy sign-ups or complicated steps—just straightforward, fun, and educational quizzing. So why wait? Plunge right in.</p>
+              <div className="p-3 p-lg-4 border bg-white rounded" style={{ boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"}}>
+                <p>It's as easy as 1-2-3! Simply select your desired topic, choose the number of questions you want to tackle, and dive into the quiz. No lengthy sign-ups or complicated steps—just straightforward, fun, and educational quizzing. So why wait? Plunge right in.</p>
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="topic" className="form-label">Select Topic:</label>
+                    <label htmlFor="topic" className="form-label">Coding Topic:</label>
                     <select
                       id="topic"
                       className="form-select"
@@ -74,7 +81,7 @@ function HomePage() {
                       onChange={(e) => setSelectedTopic(e.target.value)}
                       required
                     >
-                      <option value="" disabled>Select a topic</option>
+                      <option value="" disabled>Select from this list</option>
                       {topics.map((topic) => (
                         <option key={topic.id} value={topic.id}>
                           {topic.name}
@@ -95,14 +102,21 @@ function HomePage() {
                       value={numQuestions}
                       onChange={(e) => setNumQuestions(e.target.value)}
                     />
-                    <span className="ms-2">{numQuestions}</span>
+                    <span className="ms-2">{numQuestions} questions</span>
                   </div>
 
                   <button type="submit" className="btn btn-primary">Take the Quiz</button>
                 </form>
               </div>
-              <p className='text-center mt-2'>Need a break from coding topics? <a href="/trivia">Play Trivia</a> instead!</p>
+              <p className='text-center mt-3'>Need a break from coding topics? <a href="/trivia" title="with questions on non-coding topics">Play Trivia</a> instead!</p>
             </div>
+          </div>
+        </div>
+        <div className="row" style={{ padding: "0 0.8rem 0 0.8rem" }}>
+          <div className="col col-12 text-center" style={{ background: "url('./assets/images/binary-codes-pattern-bottom-cropped-greyscale.png')"}}>
+          <div className="text-center px-5 pt-5">
+            <img src="./assets/images/Home-Page-Footer-Attachment.png" alt="Human evolution - from the Ape to the Coder" title="Code! Evolve!! Survive!!!" className="img-fluid"/>
+          </div>
           </div>
         </div>
       </div>
