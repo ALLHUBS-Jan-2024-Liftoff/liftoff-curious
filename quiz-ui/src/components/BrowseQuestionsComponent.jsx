@@ -117,6 +117,15 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
         await bulkDeleteQuestions(selectedQuestions);
         setMessageType('success');
         setMessage('Selected questions deleted successfully.');
+        setSelectedQuestions([]);
+        setSelectAll(false);
+  
+        // Reset topic selection and pagination
+        setSelectedTopic(null);
+        setSelectedTopicName("Select A Topic to Filter");
+        setFilteredQuestions(questions); // Show all questions
+        setCurrentPage(1); // Reset to first page
+  
         fetchQuestions();
       } catch (error) {
         setMessageType('danger');
@@ -124,7 +133,7 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
         console.error("Error deleting questions:", error);
       }
     }
-  };
+  };  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -137,6 +146,13 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   };
 
   const handleTopicSelect = (topicId) => {
+    // Reset alert message
+    setMessage(null);
+    setMessageType(null);
+    
+    setSelectedQuestions([]);
+    setSelectAll(false);
+  
     if (topicId === "all") {
       setSelectedTopicName("All Topics");
       setFilteredQuestions(questions);
@@ -149,27 +165,31 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
     setCurrentPage(1); // Reset to first page on filter change
   };
   
+  
 
   const handleSelectQuestion = (questionId) => {
     setSelectedQuestions((prevSelected) => {
       let newSelected;
       if (questionId === 'all') {
         if (selectAll) {
-          newSelected = [];
+          // If currently selecting all, unselect all visible questions
+          newSelected = prevSelected.filter(id => !currentQuestions.some(q => q.id === id));
           setSelectAll(false);
         } else {
-          newSelected = questions.map(question => question.id);
+          // If not currently selecting all, select all visible questions
+          const visibleQuestionIds = currentQuestions.map(question => question.id);
+          newSelected = Array.from(new Set([...prevSelected, ...visibleQuestionIds]));
           setSelectAll(true);
         }
       } else {
+        // Toggle individual question selection
         newSelected = prevSelected.includes(questionId)
           ? prevSelected.filter(id => id !== questionId)
           : [...prevSelected, questionId];
-        if (newSelected.length === questions.length) {
-          setSelectAll(true);
-        } else {
-          setSelectAll(false);
-        }
+  
+        // Check if all visible questions are selected
+        const allVisibleSelected = currentQuestions.every(question => newSelected.includes(question.id));
+        setSelectAll(allVisibleSelected);
       }
       setIsBulkDeleteDisabled(newSelected.length === 0);
       return newSelected;
@@ -191,7 +211,15 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   const indexOfFirstQuestion = indexOfLastQuestion - itemsPerPage;
   const currentQuestions = filteredQuestions.slice(indexOfFirstQuestion, indexOfLastQuestion);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => {
+    // Reset alert message
+    setMessage(null);
+    setMessageType(null);
+    
+    setSelectedQuestions([]);
+    setSelectAll(false);
+    setCurrentPage(pageNumber);
+  };  
 
   const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
 
@@ -225,23 +253,42 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
     return items;
   };
 
+  const handleDeleteAllQuestions = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete all questions in the question bank? This action is irreversible.");
+    if (confirmDelete) {
+      try {
+        const allQuestionIds = questions.map(question => question.id);
+        await bulkDeleteQuestions(allQuestionIds);
+        setMessageType('success');
+        setMessage('All questions deleted successfully.');
+        setSelectedQuestions([]);
+        setSelectAll(false);
+        fetchQuestions();
+      } catch (error) {
+        setMessageType('danger');
+        setMessage('Error deleting all questions.');
+        console.error("Error deleting questions:", error);
+      }
+    }
+  };  
+
   return (
     <div className="container p-0 mt-4">
       <div className="d-flex align-items-end justify-content-between">
-      <Dropdown className="mb-3">
-        <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-          {selectedTopicName == 'Select A Topic to Filter' ? `${selectedTopicName}` : `Topic: ${selectedTopicName}`}
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          {topics.map((topic) => (
-            <Dropdown.Item key={topic.id} onClick={() => handleTopicSelect(topic.id)}>
-              {topic.name}
-            </Dropdown.Item>
-          ))}
-          <Dropdown.Divider />
-          <Dropdown.Item onClick={() => handleTopicSelect("all")}>All Topics</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+        <Dropdown className="mb-3">
+          <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+            {selectedTopicName == 'Select A Topic to Filter' ? `${selectedTopicName}` : `Topic: ${selectedTopicName}`}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {topics.map((topic) => (
+              <Dropdown.Item key={topic.id} onClick={() => handleTopicSelect(topic.id)}>
+                {topic.name}
+              </Dropdown.Item>
+            ))}
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={() => handleTopicSelect("all")}>All Topics</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
         <Button
           variant="danger"
           className="mb-3"
@@ -311,6 +358,15 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
         <Pagination.Next onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} />
         <Pagination.Last onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} />
       </Pagination>
+  
+      <details className="mt-4">
+        <summary className="text-danger"><strong>Danger Zone</strong></summary>
+        <p className="mt-2">This action will delete all questions from the question bank. This operation is irreversible, so proceed with caution.</p>
+        <Button variant="danger" onClick={handleDeleteAllQuestions}>
+          Delete All Questions in Question Bank
+        </Button>
+      </details>
+  
       {currentQuestion && (
         <>
           <Modal show={viewShow} onHide={handleClose}>
@@ -330,7 +386,7 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
               <Button variant="secondary" onClick={handleClose}>Close</Button>
             </Modal.Footer>
           </Modal>
-
+  
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Edit Question</Modal.Title>
@@ -399,6 +455,7 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
       )}
     </div>
   );
+  
 };
 
 export default BrowseQuestionsComponent;
