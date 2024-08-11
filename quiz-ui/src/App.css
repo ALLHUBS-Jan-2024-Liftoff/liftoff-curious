@@ -203,3 +203,8 @@ body.dark {
 .faded-text {
   opacity: 70%;
 }
+
+/* .faded-text {
+  color: rgb(80, 80, 80);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+} */

@@ -1,0 +1,6 @@
+"content","answer","optionA","optionB","optionC","optionD","topicId"
+"What does the <nav> tag in HTML represent?","A section of navigation links","A section of navigation links","A section of main content","A section of footer content","A section of sidebar content","1"
+"What is the <section> tag used for in HTML?","To define a section in a document","To define a section in a document","To define a header in a document","To define a footer in a document","To define a paragraph in a document","1"
+"What does the <footer> tag in HTML define?","The footer for a document or section","The header for a document or section","The footer for a document or section","The main content of a document","The sidebar for a document","1"
+"What is the purpose of the <article> tag in HTML?","To specify independent, self-contained content","To specify a section of navigation links","To specify independent, self-contained content","To specify a footer for a document","To specify a header for a document","1"
+"Which tag is used to embed audio files in HTML?","<audio>","<audio>","<sound>","<music>","<media>","1"

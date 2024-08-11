@@ -117,8 +117,8 @@ function HomePage() {
             </div>
           </div>
         </div>
-
-        <div className="row p-3 p-lg-5 pt-lg-0">
+        { topicsForQuickQuiz.length > 0 ? (
+          <div className="row p-3 p-lg-5 pt-lg-0">
           <h3 className="mb-3">Featured Quizzes</h3>
           <p className="mb-3 mb-lg-4">Unsure which topic to choose or how many questions you'd like to tackle?<br/>We've got you covered! Dive into our selection of 10-question quick quizzes—perfect for getting started and finding your groove.</p>
           {topicsForQuickQuiz.map((topic) => (
@@ -148,6 +148,9 @@ function HomePage() {
             </div>
           ))}
         </div>
+          ) : (<div style={{ fontSize: "0", lineHeight: "0"}}>&nbsp;</div>)
+        }
+        
 
         <div className="row" style={{ padding: "0 0.8rem 0 0.8rem" }}>
           <div className="col col-12 text-center" style={{ background: "url('./assets/images/binary-codes-pattern-bottom-cropped-greyscale.png')" }}>

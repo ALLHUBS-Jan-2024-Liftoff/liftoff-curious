@@ -21,6 +21,7 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [selectedTopicName, setSelectedTopicName] = useState("Select A Topic to Filter");
 
   useEffect(() => {
     const handleResize = () => {
@@ -136,14 +137,18 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   };
 
   const handleTopicSelect = (topicId) => {
-    setSelectedTopic(topicId);
     if (topicId === "all") {
+      setSelectedTopicName("All Topics");
       setFilteredQuestions(questions);
     } else {
+      const selectedTopic = topics.find(topic => topic.id === parseInt(topicId));
+      setSelectedTopicName(selectedTopic ? selectedTopic.name : "Select A Topic");
       setFilteredQuestions(questions.filter(question => question.topic && question.topic.id === parseInt(topicId)));
     }
+    setSelectedTopic(topicId);
     setCurrentPage(1); // Reset to first page on filter change
   };
+  
 
   const handleSelectQuestion = (questionId) => {
     setSelectedQuestions((prevSelected) => {
@@ -223,20 +228,20 @@ const BrowseQuestionsComponent = ({ refreshTrigger }) => {
   return (
     <div className="container p-0 mt-4">
       <div className="d-flex align-items-end justify-content-between">
-        <Dropdown className="mb-3">
-          <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-            Select A Topic to Filter
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            {topics.map((topic) => (
-              <Dropdown.Item key={topic.id} onClick={() => handleTopicSelect(topic.id)}>
-                {topic.name}
-              </Dropdown.Item>
-            ))}
-            <Dropdown.Divider />
-            <Dropdown.Item onClick={() => handleTopicSelect("all")}>All Topics</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+      <Dropdown className="mb-3">
+        <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+          {selectedTopicName == 'Select A Topic to Filter' ? `${selectedTopicName}` : `Topic: ${selectedTopicName}`}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          {topics.map((topic) => (
+            <Dropdown.Item key={topic.id} onClick={() => handleTopicSelect(topic.id)}>
+              {topic.name}
+            </Dropdown.Item>
+          ))}
+          <Dropdown.Divider />
+          <Dropdown.Item onClick={() => handleTopicSelect("all")}>All Topics</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
         <Button
           variant="danger"
           className="mb-3"
