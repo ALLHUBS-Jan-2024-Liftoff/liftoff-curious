@@ -138,7 +138,7 @@ function TopicManagerComponent() {
       </div>
 
       <div className="mb-4">
-        <h5>Add A New Topic</h5>
+        <h5>Add A New Topic<sup>*</sup></h5>
         <div className="row mb-3">
           <div className="col-md-2">
             <input
@@ -154,6 +154,8 @@ function TopicManagerComponent() {
           </div>
           <div className="col-auto"></div>
         </div>
+        <p><sup>*</sup>Note: To ensure that the quick-quiz cards in the 'Featured Quizzes' section on home page are properly render, remember to add corresponding logo for the topic in the 'public/assets/topic-logos/' folder every time when you add a new topic and create at least 10 questions on that topic.</p>
+        
       </div>
     </div>
   );

@@ -15,7 +15,9 @@ function Quiz() {
           chosenTopic={chosenTopic}
         />
       ) : (
-        <p>No questions available. Please go back and select a topic and number of questions.</p>
+        <div style={{ minHeight: '850px'}} className='p-3 p-lg-5 bg-light'>
+        <p>No questions available. Please go back to the <a href="/" title="Click to visit">home page</a> and select a topic and number of questions.</p>
+        </div>
       )}
     </div>
   );

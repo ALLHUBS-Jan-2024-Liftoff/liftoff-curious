@@ -8,4 +8,5 @@ import java.util.List;
 // Interface for CRUD on Question entity
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByTopicId(Long topicId);
+    int countByTopicId(Long topicId);
 }
