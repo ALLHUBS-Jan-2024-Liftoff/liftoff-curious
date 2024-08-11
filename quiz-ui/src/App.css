@@ -191,17 +191,15 @@ body.dark {
   border-radius: 0.4rem;
 }
 
-.scale-8 {
-  zoom: 0.8; /* Old IE only */
+/* @media screen and (max-width: 800px) {
+  .small {
+  zoom: 0.8; 
   -moz-transform: scale(0.8);
   -webkit-transform: scale(0.8);
   transform: scale(0.8);
   transform-origin: top left;
-}
-
-/* @media screen and (max-width: 800px) {
-  .ui-img {
-    max-width: 100%;
-  }
-
 } */
+
+.faded-text {
+  opacity: 70%;
+}

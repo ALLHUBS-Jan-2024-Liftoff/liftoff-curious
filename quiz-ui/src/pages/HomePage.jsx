@@ -113,12 +113,11 @@ function HomePage() {
                   <button type="submit" className="btn btn-primary">Take the Quiz</button>
                 </form>
               </div>
-              <p className='text-center mt-3'>Need a break from coding topics? <a href="/trivia" title="with questions on non-coding topics">Play Trivia</a> instead!</p>
+              <p className='text-center mt-3 faded-text'>Need a break from coding topics? <a href="/trivia" title="with questions on non-coding topics">Play Trivia</a> instead!</p>
             </div>
           </div>
         </div>
 
-        {/* New Row with Horizontal Cards */}
         <div className="row p-3 p-lg-5 pt-lg-0">
           <h3 className="mb-3">Featured Quizzes</h3>
           <p className="mb-3 mb-lg-4">Unsure which topic to choose or how many questions you'd like to tackle?<br/>We've got you covered! Dive into our selection of 10-question quick quizzes—perfect for getting started and finding your groove.</p>
