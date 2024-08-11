@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/quiz-api/topics")
 public class TopicController {
-
 
     @Autowired
     private TopicRepository topicRepository;
@@ -24,12 +24,10 @@ public class TopicController {
     @Autowired
     private QuestionRepository questionRepository;
 
-
     @GetMapping("/all")
     public List<Topic> getAllTopics() {
         return topicRepository.findAll();
     }
-
 
     @GetMapping("/{topicId}")
     public Topic getTopic(@PathVariable("topicId") Long topicId) {
@@ -40,7 +38,6 @@ public class TopicController {
             throw new ResourceNotFoundException("Topic not found with id " + topicId);
         }
     }
-
 
     @PostMapping
     public Topic createTopic(@RequestBody Topic newTopic) {
@@ -74,5 +71,16 @@ public class TopicController {
         }
     }
 
+    @GetMapping("/questionsupported")
+    public ResponseEntity<List<Topic>> getTopicsWithMinQuestions(@RequestParam int minq) {
+        List<Topic> topicsWithMinQuestions = topicRepository.findAll().stream()
+                .filter(topic -> questionRepository.countByTopicId(topic.getId()) >= minq)
+                .collect(Collectors.toList());
 
+        if (topicsWithMinQuestions.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(topicsWithMinQuestions, HttpStatus.OK);
+    }
 }
