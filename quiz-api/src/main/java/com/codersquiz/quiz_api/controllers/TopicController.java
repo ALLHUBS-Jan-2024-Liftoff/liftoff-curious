@@ -59,18 +59,6 @@ public class TopicController {
         }
     }
 
-
-//    @DeleteMapping("/{topicId}")
-//    public String deleteTopic(@PathVariable Long topicId) {
-//        Optional<Topic> optionalTopic = topicRepository.findById(topicId);
-//        if (optionalTopic.isPresent()) {
-//            topicRepository.deleteById(topicId);
-//            return "Topic deleted successfully";
-//        } else {
-//            throw new ResourceNotFoundException("Topic not found with id " + topicId);
-//        }
-//    }
-
     @DeleteMapping("/{topicId}")
     public ResponseEntity<String> deleteTopic(@PathVariable Long topicId) {
         Optional<Topic> optionalTopic = topicRepository.findById(topicId);

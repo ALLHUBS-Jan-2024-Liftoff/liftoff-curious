@@ -12,10 +12,16 @@ import FeedbackPage from './pages/FeedbackPage';
 import Register from './routes/Register';
 import Login from './routes/Login';
 import { AuthProvider } from './context/AuthContext';
+import Error from './routes/Error';
+import MyErrorBoundary from './components/MyErrorBoundary';
 
 const router = createBrowserRouter([
   {
-    element: <Layout />,
+    element: (
+      <MyErrorBoundary>
+        <Layout />
+      </MyErrorBoundary>
+    ),
     children: [
       { path: '/', element: <Home /> },
       { path: '/quiz', element: <Quiz /> },
@@ -26,6 +32,7 @@ const router = createBrowserRouter([
       { path: '/login', element: <Login /> },
       { path: '/register', element: <Register /> },
       { path: '/quizmaster', element: <QuizMaster /> },
+      { path: '*', element: <Error /> }, // Catch-all route
     ],
   },
 ]);

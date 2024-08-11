@@ -72,7 +72,7 @@ function FeedbackPage() {
   };
 
   return (
-    <div className="container py-3 py-lg-5 bg-white px-lg-4" id="feedback-container">
+    <div style={{ minHeight: '850px'}} className="container py-3 py-lg-5 bg-white px-lg-4" id="feedback-container">
       <div className="row">
         <div className="col-6">
           <h4>Quiz Feedback</h4>

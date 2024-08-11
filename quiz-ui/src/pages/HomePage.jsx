@@ -23,16 +23,16 @@ function HomePage() {
     fetchTopics();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, topicId = selectedTopic, questionCount = numQuestions) => {
     e.preventDefault();
     try {
-      const questions = await getNQuestionsOnTopicX(numQuestions, selectedTopic);
-      const topicObject = await getTopicById(selectedTopic);
-      const chosenTopic = topicObject.name; 
+      const questions = await getNQuestionsOnTopicX(questionCount, topicId);
+      const topicObject = await getTopicById(topicId);
+      const chosenTopic = topicObject.name;
       navigate('/quiz', {
         state: {
           questions,          // Passing the questions array
-          numQuestions,       // Passing the number of questions selected
+          numQuestions: questionCount,       // Passing the number of questions selected
           chosenTopic         // Passing the name of the chosen topic
         }
       });
@@ -43,16 +43,15 @@ function HomePage() {
 
   return (
     <div className="home">
-      <HomeCarousel/>
-      <div className='jumbotron d-block d-lg-none d-flex align-items-center' style={{ height: '300px', backgroundImage: 'url("./assets/banner-images/Mobile_Banner_lowQ.jpg")', backgroundPositionX: '100%'}}>
-      <div className='p-3 pe-5 text-white' style={{ background: 'linear-gradient(to right, rgba(0, 100, 0, 0.9) 0%, rgba(0, 100, 0, 0.5) 70%, transparent 100%)' }}>
+      <HomeCarousel />
+      <div className='jumbotron d-block d-lg-none d-flex align-items-center' style={{ height: '300px', backgroundImage: 'url("./assets/banner-images/Mobile_Banner_lowQ.jpg")', backgroundPositionX: '100%' }}>
+        <div className='p-3 pe-5 text-white' style={{ background: 'linear-gradient(to right, rgba(0, 100, 0, 0.9) 0%, rgba(0, 100, 0, 0.5) 70%, transparent 100%)' }}>
           <h1 className="fw-bold">Fun Quizzes</h1>
           <h2>Anywhere, Anytime!</h2>
-      </div>
-
+        </div>
       </div>
       <div className="bg-light">
-        <div className="row" >
+        <div className="row">
           <div className="col-12 col-lg-6 pt-2">
             <div className="p-3 ps-lg-5">
               <div className="py-3">
@@ -69,7 +68,7 @@ function HomePage() {
           </div>
           <div className="col-12 col-lg-6 pt-2">
             <div className="p-3 p-lg-5">
-              <div className="p-3 p-lg-4 border bg-white rounded" style={{ boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"}}>
+              <div className="p-3 p-lg-4 border bg-white rounded" style={{ boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px" }}>
                 <p>It's as easy as 1-2-3! Simply select your desired topic, choose the number of questions you want to tackle, and dive into the quiz. No lengthy sign-ups or complicated steps—just straightforward, fun, and educational quizzing. So why wait? Plunge right in.</p>
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
@@ -112,11 +111,43 @@ function HomePage() {
             </div>
           </div>
         </div>
+
+        {/* New Row with Horizontal Cards */}
+        <div className="row p-3">
+          <h3 className="text-center my-3">Try a Quick Quiz!</h3>
+          {topics.slice(0, 6).map((topic) => (
+            <div key={topic.id} className="col-12 col-md-6 mb-3">
+              <div className="card h-100 d-flex flex-row">
+                <div className="card-img-left">
+                  <img 
+                    src={`./assets/topic-logos/${topic.name.toLowerCase()}.png`} 
+                    className="img-fluid" 
+                    alt={`${topic.name} logo`} 
+                    style={{ width: "150px", height: "150px", objectFit: "cover" }}
+                  />
+                </div>
+                <div className="card-body d-flex flex-column justify-content-between">
+                  <div>
+                    <h5 className="card-title">{topic.name}</h5>
+                    <p className="card-text">Test your knowledge with 10 questions on {topic.name}.</p>
+                  </div>
+                  <button 
+                    className="btn btn-success align-self-end"
+                    onClick={(e) => handleSubmit(e, topic.id, 10)}
+                  >
+                    Play Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
         <div className="row" style={{ padding: "0 0.8rem 0 0.8rem" }}>
-          <div className="col col-12 text-center" style={{ background: "url('./assets/images/binary-codes-pattern-bottom-cropped-greyscale.png')"}}>
-          <div className="text-center px-5 pt-5">
-            <img src="./assets/images/Home-Page-Footer-Attachment.png" alt="Human evolution - from the Ape to the Coder" title="Code! Evolve!! Survive!!!" className="img-fluid"/>
-          </div>
+          <div className="col col-12 text-center" style={{ background: "url('./assets/images/binary-codes-pattern-bottom-cropped-greyscale.png')" }}>
+            <div className="text-center px-5 pt-5">
+              <img src="./assets/images/Home-Page-Footer-Attachment.png" alt="Human evolution - from the Ape to the Coder" title="Code! Evolve!! Survive!!!" className="img-fluid" />
+            </div>
           </div>
         </div>
       </div>
