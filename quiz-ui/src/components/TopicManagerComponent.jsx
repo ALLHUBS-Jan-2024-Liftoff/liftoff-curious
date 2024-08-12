@@ -154,7 +154,7 @@ function TopicManagerComponent() {
           </div>
           <div className="col-auto"></div>
         </div>
-        <p><sup>*</sup>Note: To ensure that the quick-quiz cards in the 'Featured Quizzes' section on home page are properly render, remember to add corresponding logo for the topic in the 'public/assets/topic-logos/' folder every time when you add a new topic and create at least 10 questions on that topic.</p>
+        <p><sup>*</sup>Note: To ensure that the quick-quiz cards in the 'Featured Quizzes' section on the home page are properly rendered, remember to add a corresponding logo for the topic in the 'public/assets/topic-logos/' folder every time when you add a new topic and create at least 10 questions on that topic.</p>
         
       </div>
     </div>
