@@ -73,7 +73,7 @@ public class AuthenticationController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        final String secretCodeHash = "$2a$10$P7jSr2dAckYPEL9d5GWG4Olc6an7118AyO67N8uGupkmZeeVdx9Ru";
+        final String secretCodeHash = "$2a$10$K/H.Q2bxavTg1x4jkDNMwO.vsMKgCQzin1n3uQU1TlkwsUz6grhjS";
         String secretCode = registrationFormDTO.getSecretCode();
         final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         boolean didMatch = encoder.matches(secretCode, secretCodeHash);

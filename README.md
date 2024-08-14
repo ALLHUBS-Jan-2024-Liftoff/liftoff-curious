@@ -9,8 +9,7 @@ Welcome to the GitHub repo of our project, where we build a hosted quiz applicat
 4. [API (Backend)](#api-backend)
 5. [Installation and Usage](#installation-and-usage)
 6. [Contributing](#contributing)
-7. [License](#license)
-8. [Contact](#contact)
+7. [Contact](#contact)
 
 ## Project Overview
 
@@ -115,14 +114,14 @@ The back-end is powered by Java Spring Boot, providing robust and scalable RESTf
     Frontend: http://localhost:3000
     Backend: http://localhost:8080
 
+6. **Additional Notes**
+
+    - To make the registration process restrictive, we have used a Secret Code system - the idea is it would be shared with trusted admin users only so that only authorized persons can open an admin account and CRUD the question bank or other app details. However, for this repostory the default Secret Code is `SecretCode`. You can use it locally. The hosted application will not work with the same.
+    - For the feature 'sending email feedback' to work properly, you are recommended to use your own email credentials in email setting area inside the backend file `application.properties`. For demo purpose, the commented out gmail username and app password may work, but only temporarily.  
+
 ## Contributing
 
 Contributions are welcome! Please fork the repository and create a pull request to propose changes.
-
-## License
-
-License details to be added soon
-<!-- This project is licensed under the MIT License. See the LICENSE file for details. -->
 
 ## Contact
 
