@@ -13,7 +13,7 @@ Welcome to the GitHub repo of our project, where we build a hosted quiz applicat
 
 ## Project Overview
 
-The web application is built using React and Bootstrap for the frontend, and Java Spring Boot for the backend, with MySQL as the database. The project is structured to maintain clear separation between the UI and API components, ensuring ease of development and scalability. Additionally, the app includes a feature called 'Trivia,' which uses an external API to present short quizzes on various non-coding topics. The cloned repository is hosted online using Netlify (for frontend) and Heroku (for backend) with ClearDB (for the MySQL database).
+The web application is built using React and Bootstrap for the frontend, and Java Spring Boot for the backend, with MySQL as the database. The project is structured to maintain clear separation between the UI and API components, ensuring ease of development and scalability. Additionally, the app includes a feature called 'Trivia,' which uses an external API to present short quizzes on various non-coding topics. The cloned repository is hosted online using Netlify (for frontend) and Railway (for backend and MySQL database).
 
 ## Folder Structure
 
@@ -60,7 +60,7 @@ The back-end is powered by Java Spring Boot, providing robust and scalable RESTf
 1. **Clone the repository:**
 
    ```
-   git clone https://github.com/your-username/liftoff-curious.git
+   git clone https://github.com/ALLHUBS-Jan-2024-Liftoff/liftoff-curious.git
    cd liftoff-curious
    ```
 
@@ -88,11 +88,11 @@ The back-end is powered by Java Spring Boot, providing robust and scalable RESTf
     Or if you use your own custom credentials, be sure to update the following lines in your application.properties file (or equivalent configuration file): 
 
     ```
-    spring.datasource.url=jdbc:mysql://localhost:3306/quiz
+    spring.datasource.url=jdbc:mysql://localhost:3306/your_db_name
     spring.datasource.username=your_username
     spring.datasource.password=your_password
     ```
-    Note: Replace your_username and your_password with the credentials you created.
+    Note: Replace your_db_name, your_username, and your_password with the credentials you created.
 
 3. **Navigate to the API directory and start the backend server:**
 
